@@ -36,6 +36,6 @@ public class MovieService {
                 () -> new NoSuchElementException("영화가 존재하지 않습니다.")
         );
         MovieDetailResponseDto movieDetailResponseDto = new MovieDetailResponseDto(movie);
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "", movieDetailResponseDto), HttpStatus.OK);
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 상세 조회 성공", movieDetailResponseDto), HttpStatus.OK);
     }
 }
