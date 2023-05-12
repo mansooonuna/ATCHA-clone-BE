@@ -1,6 +1,12 @@
 package com.sparta.atchaclonecoding.security.userDetails;
 
-public class UserDetailsImpl {
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+
+public class UserDetailsImpl implements UserDetails {
 
     private final Member member;
     private final String email;
@@ -14,7 +20,6 @@ public class UserDetailsImpl {
         return member;
     }
 
-    @Override
     public String getEmail() {
         return this.email;
     }
@@ -24,7 +29,17 @@ public class UserDetailsImpl {
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
     public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
         return null;
     }
 
@@ -48,4 +63,3 @@ public class UserDetailsImpl {
         return false;
     }
 }
-
