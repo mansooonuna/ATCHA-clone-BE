@@ -25,9 +25,9 @@ public class Member {
     @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(name = "image_url")
     @Lob
-    private String profileImage;
+    private String image;
 
     public Member(String email, String password, String nickname) {
         this.email = email;
