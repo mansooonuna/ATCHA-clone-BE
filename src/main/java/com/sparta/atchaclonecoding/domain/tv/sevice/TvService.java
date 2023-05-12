@@ -22,14 +22,12 @@ public class TvService {
     private final TvRepository tvRepository;
 
     // Tv 전체조회
+    // Tv 전체조회
     @Transactional(readOnly = true)
-    public ResponseEntity<List<TvResponseDto>> getTvPrograms() {
-        List<TvResponseDto> tvList = tvRepository.findAll()
-                                        .stream()
-                                        .map(TvResponseDto::new)
-                                        .collect(Collectors.toList());
+    public ResponseEntity<Message> getTvPrograms() {
+        List<TvResponseDto> tvList = tvRepository.findAll().stream().map(TvResponseDto::new).toList();
         Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tvList);
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , TvResponseDto), HttpStatus.OK);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
