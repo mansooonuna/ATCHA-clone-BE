@@ -1,10 +1,15 @@
 package com.sparta.atchaclonecoding.domain.movie.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
+@Entity
 @NoArgsConstructor
 public class Movie {
     @Id
@@ -29,5 +34,8 @@ public class Movie {
     private String image;
     @Column(nullable = false)
     private double star;
+    @OneToMany(mappedBy = "movie")
+    @JsonManagedReference
+    private List<PersonMovie> personMovieList;
 
 }
