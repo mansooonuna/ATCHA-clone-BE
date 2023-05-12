@@ -4,7 +4,6 @@ import com.sparta.atchaclonecoding.domain.movie.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.dto.MovieResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
 import com.sparta.atchaclonecoding.domain.movie.repository.MovieRepository;
-import com.sparta.atchaclonecoding.security.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
 
     @Transactional
-    public ResponseEntity<List<MovieResponseDto>> getMovieList(UserDetailsImpl userDetails) {
+    public ResponseEntity<List<MovieResponseDto>> getMovieList(Member member) {
         List<MovieResponseDto> movieResponseDtoList = movieRepository.findAll()
                                                         .stream()
                                                         .map(MovieResponseDto::new)
@@ -31,7 +30,7 @@ public class MovieService {
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , movieResponseDtoList), HttpStatus.OK);
     }
 
-    public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, UserDetailsImpl userDetails) {
+    public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, Member member) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
                 () -> new NoSuchElementException("영화가 존재하지 않습니다.")
         );

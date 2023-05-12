@@ -3,18 +3,15 @@ package com.sparta.atchaclonecoding.domain.tv.sevice;
 import com.sparta.atchaclonecoding.domain.tv.dto.TvResponseDto;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
-import com.sparta.atchaclonecoding.security.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
