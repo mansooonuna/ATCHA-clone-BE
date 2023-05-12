@@ -1,6 +1,8 @@
 package com.sparta.atchaclonecoding.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
 import com.sparta.atchaclonecoding.security.dto.SecurityExceptionDto;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
@@ -24,28 +26,47 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtUtil.resolveToken(request);
+        String access_token = jwtUtil.resolveToken(request, JwtUtil.ACCESS_KEY);
+        String refresh_token = jwtUtil.resolveToken(request, JwtUtil.REFRESH_KEY);
 
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
-                jwtExceptionHandler(response, "Token error", HttpStatus.UNAUTHORIZED.value());
+        // 토큰이 존재하면 유효성 검사를 수행하고, 유효하지 않은 경우 예외 처리
+        if(access_token == null){
+            filterChain.doFilter(request, response);
+        } else {
+            if (jwtUtil.validateToken(access_token)) {
+                setAuthentication(jwtUtil.getUserInfoFromToken(access_token));
+            } else if (refresh_token != null && jwtUtil.refreshTokenValid(refresh_token)) {
+                //Refresh토큰으로 유저명 가져오기
+                String email = jwtUtil.getUserInfoFromToken(refresh_token);
+                //유저명으로 유저 정보 가져오기
+                Member member = memberRepository.findByEmail(email).get();
+                //새로운 ACCESS TOKEN 발급
+                String newAccessToken = jwtUtil.createToken(email, "Access");
+                //Header에 ACCESS TOKEN 추가
+                jwtUtil.setHeaderAccessToken(response, newAccessToken);
+                setAuthentication(email);
+            } else if (refresh_token == null) {
+                jwtExceptionHandler(response, "AccessToken Expired.", HttpStatus.BAD_REQUEST.value());
+                return;
+            } else {
+                jwtExceptionHandler(response, "RefreshToken Expired.", HttpStatus.BAD_REQUEST.value());
                 return;
             }
-            Claims info = jwtUtil.getUserInfoFromToken(token);
-            setAuthentication(info.getSubject());
+            // 다음 필터로 요청과 응답을 전달하여 필터 체인 계속 실행
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request,response);
     }
 
-    public void setAuthentication(String username) {
+    public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = jwtUtil.createAuthentication(username);
+        Authentication authentication = jwtUtil.createAuthentication(email);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
