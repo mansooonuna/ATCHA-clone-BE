@@ -1,5 +1,6 @@
 package com.sparta.atchaclonecoding.domain.movie.service;
 
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.movie.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.dto.MovieResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
