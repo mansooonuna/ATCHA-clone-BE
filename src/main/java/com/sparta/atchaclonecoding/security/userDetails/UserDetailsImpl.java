@@ -1,15 +1,13 @@
 package com.sparta.atchaclonecoding.security.userDetails;
 
-import lombok.Builder;
-
 public class UserDetailsImpl {
 
     private final Member member;
-    private final String userEmail;
+    private final String email;
 
-    public UserDetailsImpl(Member member, String userEmail) {
+    public UserDetailsImpl(Member member, String email) {
         this.member = member;
-        this.userEmail = userEmail;
+        this.email = email;
     }
 
     public Member getMember() {
@@ -17,8 +15,8 @@ public class UserDetailsImpl {
     }
 
     @Override
-    public String getUsername() {
-        return this.userEmail;
+    public String getEmail() {
+        return this.email;
     }
 
     public String getNickname() {
@@ -50,4 +48,4 @@ public class UserDetailsImpl {
         return false;
     }
 }
-}
+
