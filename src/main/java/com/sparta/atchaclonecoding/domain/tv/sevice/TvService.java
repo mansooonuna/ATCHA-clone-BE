@@ -4,7 +4,6 @@ import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.tv.dto.TvResponseDto;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
-import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
