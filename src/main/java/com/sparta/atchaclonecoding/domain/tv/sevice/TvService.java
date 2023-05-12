@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TvService {
     private final TvRepository tvRepository;
-    
+
     // Tv 전체조회
     @Transactional(readOnly = true)
     public ResponseEntity<Message> getTvPrograms(UserDetailsImpl userDetails) {
