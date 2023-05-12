@@ -1,26 +1,26 @@
 package com.sparta.atchaclonecoding.domain.tv.dto;
 
+import com.sparta.atchaclonecoding.domain.person.entity.Person;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class TvResponseDto {
-    private String title;
+    private Long tvId;
     private String image;
-    private int year;
+    private String title;
     private String genre;
-    private String country;
     private double star;
 
     public TvResponseDto(Tv tv) {
-        this.title = tv.getTitle();
+        this.tvId = tv.getId();
         this.image = tv.getImage();
-        this.year = tv.getYear();
+        this.title = tv.getTitle();
         this.genre = tv.getGenre();
-        this.country = tv.getCountry();
         this.star = tv.getStar();
-
     }
-
-
 }

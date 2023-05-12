@@ -11,26 +11,20 @@ public class Tv {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tv_id")
     private Long id;
-
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    private int year;
-    @Column(nullable = false)
-    private String channel;
+    private double star;
     @Column(nullable = false)
     private String genre;
     @Column(nullable = false)
-    private String country;
-    @Column(nullable = false)
     private String age;
-    @Column(nullable = false,columnDefinition = "text")
-    private String information;
     @Column(name = "image_url", nullable = false)
     @Lob
     private String image;
-    @Column(nullable = false)
-    private double star;
+    @Column(nullable = false,columnDefinition = "text")
+    private String information;
 
 }
