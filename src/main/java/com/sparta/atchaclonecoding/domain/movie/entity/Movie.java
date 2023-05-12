@@ -19,10 +19,6 @@ public class Movie {
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    private int year;
-    @Column(nullable = false)
-    private String country;
-    @Column(nullable = false)
     private String genre;
     @Column(nullable = false)
     private String time;
