@@ -1,9 +1,10 @@
 package com.sparta.atchaclonecoding.domain.tv.sevice;
 
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.tv.dto.TvResponseDto;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
-import com.sparta.atchaclonecoding.security.UserDetailsImpl;
+import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class TvService {
 
     // Tv 전체조회
     @Transactional(readOnly = true)
-    public ResponseEntity<Message> getTvPrograms(UserDetailsImpl userDetails) {
+    public ResponseEntity<Message> getTvPrograms(Member member) {
         List<TvResponseDto> tvList = tvRepository.findAll().stream().map(TvResponseDto::new).collect(Collectors.toList());
         Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tvList);
         return new ResponseEntity<>(message, HttpStatus.OK);
@@ -32,7 +33,7 @@ public class TvService {
 
     // Tv 상세조회
     @Transactional(readOnly = true)
-    public ResponseEntity<Message> getTvProgram(Long tvId, UserDetailsImpl userDetails) {
+    public ResponseEntity<Message> getTvProgram(Long tvId, Member member) {
         Tv tv = tvRepository.findById(tvId).orElseThrow(
                 () -> new NullPointerException("해당하는 TV 프로그램 없음")
         );
