@@ -20,12 +20,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TvService {
     private final TvRepository tvRepository;
-
-    // Tv 전체조회
+    
     // Tv 전체조회
     @Transactional(readOnly = true)
-    public ResponseEntity<Message> getTvPrograms() {
-        List<TvResponseDto> tvList = tvRepository.findAll().stream().map(TvResponseDto::new).toList();
+    public ResponseEntity<Message> getTvPrograms(UserDetailsImpl userDetails) {
+        List<TvResponseDto> tvList = tvRepository.findAll().stream().map(TvResponseDto::new).collect(Collectors.toList());
         Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tvList);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -33,7 +32,7 @@ public class TvService {
 
     // Tv 상세조회
     @Transactional(readOnly = true)
-    public ResponseEntity<Message> getTvProgram(Long tvId) {
+    public ResponseEntity<Message> getTvProgram(Long tvId, UserDetailsImpl userDetails) {
         Tv tv = tvRepository.findById(tvId).orElseThrow(
                 () -> new NullPointerException("해당하는 TV 프로그램 없음")
         );
