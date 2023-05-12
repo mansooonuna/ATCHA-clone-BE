@@ -1,6 +1,8 @@
 package com.sparta.atchaclonecoding.domain.person.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
+import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +21,10 @@ public class PersonTv {
     @JoinColumn(name = "person_id")
     @JsonBackReference
     private Person person;
+
+    @ManyToOne
+    @JoinColumn(name = "tv_id")
+    @JsonBackReference
+    private Tv tv;
 
 }

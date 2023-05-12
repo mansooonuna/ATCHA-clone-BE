@@ -30,6 +30,8 @@ public class Movie {
     private String image;
     @Column(nullable = false)
     private double star;
+
+    // TODO : 테이블 생성 후 List 잘 받아오는지 확인 후 추가 or 삭제 진행
     @OneToMany(mappedBy = "movie")
     @JsonManagedReference
     private List<PersonMovie> personMovieList;

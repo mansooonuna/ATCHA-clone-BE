@@ -1,24 +1,27 @@
 package com.sparta.atchaclonecoding.security.userDetails;
 
-import lombok.Builder;
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-public class UserDetailsImpl {
+import java.util.Collection;
+
+public class UserDetailsImpl implements UserDetails {
 
     private final Member member;
-    private final String userEmail;
+    private final String email;
 
-    public UserDetailsImpl(Member member, String userEmail) {
+    public UserDetailsImpl(Member member, String email) {
         this.member = member;
-        this.userEmail = userEmail;
+        this.email = email;
     }
 
     public Member getMember() {
         return member;
     }
 
-    @Override
-    public String getUsername() {
-        return this.userEmail;
+    public String getEmail() {
+        return this.email;
     }
 
     public String getNickname() {
@@ -26,7 +29,17 @@ public class UserDetailsImpl {
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
     public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
         return null;
     }
 
@@ -49,5 +62,4 @@ public class UserDetailsImpl {
     public boolean isEnabled() {
         return false;
     }
-}
 }

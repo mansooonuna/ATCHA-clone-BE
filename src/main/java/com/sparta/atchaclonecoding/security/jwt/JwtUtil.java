@@ -1,10 +1,13 @@
 package com.sparta.atchaclonecoding.security.jwt;
 
+import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshToken;
+import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshTokenRepository;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,24 +18,30 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String AUTHORIZATION_KEY = "auth";
+    //    public static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+    public static final String ACCESS_KEY = "ACCESS_KEY";
+    public static final String REFRESH_KEY = "REFRESH_KEY";
+    private static final long ACCESS_TIME = Duration.ofMinutes(60).toMillis();
+    private static final long REFRESH_TIME = Duration.ofDays(7).toMillis();
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostConstruct
     public void init() {
@@ -41,8 +50,9 @@ public class JwtUtil {
     }
 
     // header 토큰을 가져오기
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    public String resolveToken(HttpServletRequest request, String token) {
+        String tokenName = token.equals("ACCESS_KEY") ? ACCESS_KEY : REFRESH_KEY;
+        String bearerToken = request.getHeader(tokenName);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
@@ -50,13 +60,17 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username) {
+    public TokenDto createAllToken(String email) {
+        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
+    }
+    public String createToken(String email, String token) {
         Date date = new Date();
+        long tokenType = token.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(username)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setSubject(email)
+                        .setExpiration(new Date(date.getTime() + tokenType))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();
@@ -80,13 +94,37 @@ public class JwtUtil {
     }
 
     // 토큰에서 사용자 정보 가져오기
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    public String getUserInfoFromToken(String token) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 인증 객체 생성
     public Authentication createAuthentication(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByEmail(email);
-        return new UsernamePasswordAuthenticationToken(userDetails, null);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    //RefreshToken 검증
+    public boolean refreshTokenValid(String token) {
+        if (!validateToken(token)) return false;
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
+        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
+    }
+    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+        response.setHeader(ACCESS_KEY, accessToken);
+    }
+
+    public long getExpirationTime(String token) {
+        // 토큰에서 만료 시간 정보를 추출
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        // 현재 시간과 만료 시간의 차이를 계산하여 반환
+        Date expirationDate = claims.getExpiration();
+        Date now = new Date();
+        long diff = (expirationDate.getTime() - now.getTime()) / 1000;
+        return diff;
     }
 }
