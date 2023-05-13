@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class MovieService {
     private final MovieRepository movieRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<List<MovieResponseDto>> getMovieList(Member member) {
         List<MovieResponseDto> movieResponseDtoList = movieRepository.findAll()
                                                         .stream()
@@ -31,6 +31,7 @@ public class MovieService {
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , movieResponseDtoList), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, Member member) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
                 () -> new NoSuchElementException("영화가 존재하지 않습니다.")
