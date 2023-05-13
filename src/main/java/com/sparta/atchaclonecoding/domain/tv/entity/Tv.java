@@ -4,26 +4,27 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
+@Builder
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Tv {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tv_id")
     private Long id;
-    @Column(nullable = false)
+    @Column
     private String title;
-    @Column(nullable = false)
+    @Column
     private double star;
-    @Column(nullable = false)
+    @Column
     private String genre;
-    @Column(nullable = false)
+    @Column
     private String age;
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", columnDefinition = "longtext")
     @Lob
     private String image;
-    @Column(nullable = false,columnDefinition = "text")
+    @Column(columnDefinition = "text")
     private String information;
 
 }

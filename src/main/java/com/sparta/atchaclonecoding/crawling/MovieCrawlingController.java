@@ -1,6 +1,9 @@
 package com.sparta.atchaclonecoding.crawling;
 
+import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
 import com.sparta.atchaclonecoding.domain.movie.repository.MovieRepository;
+import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
+import com.sparta.atchaclonecoding.domain.person.repository.PersonMovieRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,9 +19,11 @@ import java.util.List;
 public class MovieCrawlingController {
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private PersonMovieRepository personMovieRepository;
     private WebDriver driver;
 
-    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdbYZj7pN";
+    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNL4a4vN";
 
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
@@ -51,10 +56,14 @@ public class MovieCrawlingController {
         List<String> list = new ArrayList<>();
 
         driver.get(url);    //브라우저에서 url로 이동한다.
-        Thread.sleep(2000); //브라우저 로딩될때까지 잠시 기다린다.
+        Thread.sleep(1000); //브라우저 로딩될때까지 잠시 기다린다.
 
-        int count = 1;
-        while (count <= 3) {
+        int count = 5;
+        while (count <= 20) {
+//            if(count == 7){
+//                count++;
+//                continue;
+//            }
             WebElement images = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > section > div > div > div > section.css-1tywu13 > div:nth-child(2) > div > ul > li:nth-child("+count+")"));
             images.click();
             Thread.sleep(2000);
@@ -72,7 +81,7 @@ public class MovieCrawlingController {
 //#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(2)
 //#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)
             String title = titleElement.getText();
-            String star = starElement.getText().substring(4,7);
+            double star = Double.parseDouble(starElement.getText().substring(4,7));
             String genre = genreElement.getText();
             genre = genre.substring(genre.lastIndexOf('·')+2);
             String time = timeElement.getText();
@@ -90,6 +99,17 @@ public class MovieCrawlingController {
             System.out.println(image);
             System.out.println(information);
 
+            Movie movie = Movie.builder()
+                    .title(title)
+                    .star(star)
+                    .genre(genre)
+                    .time(time)
+                    .age(age)
+                    .image(image)
+                    .information(information)
+                    .build();
+            movieRepository.save(movie);
+
             for (int i = 0; i < 6; i++) {
                 String personName = personElements.get(i).getAttribute("title");
                 personName = personName.substring(0,personName.indexOf('('));
@@ -97,6 +117,12 @@ public class MovieCrawlingController {
                 personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
                 System.out.println(personName);
                 System.out.println(personJob);
+                PersonMovie personMovie = PersonMovie.builder()
+                        .name(personName)
+                        .role(personJob)
+                        .build();
+                personMovie.addMovie(movie);
+                personMovieRepository.save(personMovie);
             }
 
             driver.navigate().back();
@@ -104,7 +130,7 @@ public class MovieCrawlingController {
             if (count % 12 == 0) {
                 WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
                 nextButton.click();
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             }
             count++;
         }

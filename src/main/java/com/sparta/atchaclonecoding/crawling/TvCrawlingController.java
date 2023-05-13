@@ -24,7 +24,7 @@ public class TvCrawlingController {
     @Autowired
     private PersonTvRepository personTvRepository;
 
-    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcd9zYxPaN";
+    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNmrQxJ9";
 
     public void process() {
         System.setProperty("webdriver.chrome.driver", "./chromedriver");
@@ -54,10 +54,16 @@ public class TvCrawlingController {
         List<String> list = new ArrayList<>();
 
         driver.get(url);
-        Thread.sleep(2000);
-
-        int count = 1;
-        while (count <= 3) {
+        Thread.sleep(1000);
+        WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
+        nextButton.click();
+        Thread.sleep(1000);
+        int count = 23;
+        while (count <= 23) {
+            if(count==14){
+                count++;
+                continue;
+            }
             WebElement images = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > section > div > div > div > section.css-1tywu13 > div:nth-child(2) > div > ul > li:nth-child("+count+")"));
             images.click();
             Thread.sleep(2000);
@@ -71,9 +77,9 @@ public class TvCrawlingController {
             List<WebElement> personElements = driver.findElements(By.className("css-1aaqvgs-InnerPartOfListWithImage"));
 
             String title = titleElement.getText();
-            double star = (double)starElement.getText().substring(4,7);
+            double star = Double.parseDouble(starElement.getText().substring(4,7));
             String genre = genreElement.getText();
-            genre = genre.substring(genre.lastIndexOf('·')+2, genre.indexOf("/"));
+            genre = genre.substring(genre.lastIndexOf('·')+2);
             String age = ageElement.getText();
             age = age.substring(age.indexOf('·')+2); //
             String image = imageElement.getAttribute("src");
@@ -86,6 +92,16 @@ public class TvCrawlingController {
             System.out.println(image);
             System.out.println(information);
 
+            Tv tv = Tv.builder()
+                    .title(title)
+                    .star(star)
+                    .genre(genre)
+                    .age(age)
+                    .image(image)
+                    .information(information)
+                    .build();
+
+            tvRepository.save(tv);
             for (int i = 0; i < 6; i++) {
                 String personName = personElements.get(i).getAttribute("title");
                 personName = personName.substring(0,personName.indexOf('('));
@@ -93,14 +109,20 @@ public class TvCrawlingController {
                 personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
                 System.out.println(personName);
                 System.out.println(personJob);
+                PersonTv personTv = PersonTv.builder()
+                        .name(personName)
+                        .role(personJob)
+                        .build();
+                personTv.addTv(tv);
+                personTvRepository.save(personTv);
             }
 
             driver.navigate().back();
             Thread.sleep(2000);
             if (count % 12 == 0) {
-                WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
-                nextButton.click();
-                Thread.sleep(2000);
+//                WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
+//                nextButton.click();
+                Thread.sleep(1000);
             }
             count++;
         }
