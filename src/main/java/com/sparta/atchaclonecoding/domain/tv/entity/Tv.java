@@ -1,8 +1,7 @@
 package com.sparta.atchaclonecoding.domain.tv.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity

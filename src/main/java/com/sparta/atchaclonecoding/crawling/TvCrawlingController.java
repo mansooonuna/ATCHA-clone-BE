@@ -1,10 +1,16 @@
 package com.sparta.atchaclonecoding.crawling;
 
+import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
+import com.sparta.atchaclonecoding.domain.person.entity.PersonTv;
+import com.sparta.atchaclonecoding.domain.person.repository.PersonTvRepository;
+import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
+import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +19,10 @@ import java.util.List;
 @Component
 public class TvCrawlingController {
     private WebDriver driver;
+    @Autowired
+    private TvRepository tvRepository;
+    @Autowired
+    private PersonTvRepository personTvRepository;
 
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcd9zYxPaN";
 
