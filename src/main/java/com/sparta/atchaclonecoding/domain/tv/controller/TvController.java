@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +31,12 @@ public class TvController {
     public ResponseEntity<Message> getTvProgram(@PathVariable(name = "tv-id")Long tvId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return tvService.getTvProgram(tvId, userDetails.getMember());
     }
+
+    @Operation(summary = "TV 프로그램 검색 메서드", description = "TV 프로그램을 검색하는 메서드입니다.")
+    @GetMapping("/tvs/search")
+    public ResponseEntity<Message> searchTv(@RequestParam(value = "searchKeyword") String searchKeyword) {
+        return tvService.searchTv(searchKeyword);
+    }
+
 
 }
