@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -38,18 +39,18 @@ public class MemberService {
     private final RedisUtil redisUtil;
 
     //회원가입
-    public ResponseEntity<Message> signup(SignupRequestDto requestDto){
+    public ResponseEntity<Message> signup(SignupRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String nickname = requestDto.getNickname();
 
         Optional<Member> findMemberByEmail = memberRepository.findByEmail(email);
-        if (findMemberByEmail.isPresent()){
+        if (findMemberByEmail.isPresent()) {
             throw new CustomException(DUPLICATE_IDENTIFIER);
         }
 
         Optional<Member> findMemberByNickname = memberRepository.findByNickname(nickname);
-        if (findMemberByNickname.isPresent()){
+        if (findMemberByNickname.isPresent()) {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
 
@@ -60,14 +61,14 @@ public class MemberService {
     }
 
     //로그인
-    public ResponseEntity<Message> login(LoginRequestDto requestDto, HttpServletResponse response){
+    public ResponseEntity<Message> login(LoginRequestDto requestDto, HttpServletResponse response) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
         Member findMember = memberRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(password, findMember.getPassword())){
+        if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new CustomException(INVALID_PASSWORD);
         }
 
@@ -100,6 +101,18 @@ public class MemberService {
         }
         throw new CustomException(USER_NOT_FOUND);
     }
+
+    // 마이페이지 조회
+    @Transactional
+    public ResponseEntity<Message> getMypage(Member member) {
+        Optional<Member> findMember = memberRepository.findByEmail(member.getEmail());
+        if (!findMember.isPresent()) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
+        Message message = Message.setSuccess(StatusEnum.OK, "요청 성공", findMember);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
 
     // 헤더 셋팅 - 리프레시 토큰 미적용
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {

@@ -13,10 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,5 +39,11 @@ public class MemberController {
     @PostMapping("/logout")
     public ResponseEntity<Message> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
         return memberService.logout(userDetails.getMember(), request);
+    }
+
+    @Operation(summary = "마이페이지 조회", description = "마이페이지 조회하는 메서드입니다.")
+    @GetMapping("/mypage")
+    public ResponseEntity<Message> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memberService.getMypage(userDetails.getMember());
     }
 }
