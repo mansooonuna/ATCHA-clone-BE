@@ -3,13 +3,16 @@ package com.sparta.atchaclonecoding.domain.member.controller;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
+import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,4 +38,9 @@ public class MemberController {
         return memberService.login(requestDto, response);
     }
 
+    @Operation(summary = "로그아웃 메서드", description = "로그아웃 메서드입니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<Message> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        return memberService.logout(userDetails.getMember(), request);
+    }
 }
