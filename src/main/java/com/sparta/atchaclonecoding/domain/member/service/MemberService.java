@@ -4,6 +4,7 @@ import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
+import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.security.jwt.JwtUtil;
 import com.sparta.atchaclonecoding.security.jwt.TokenDto;
 import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshToken;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -39,12 +42,12 @@ public class MemberService {
 
         Optional<Member> findMemberByEmail = memberRepository.findByEmail(email);
         if (findMemberByEmail.isPresent()){
-            throw new IllegalArgumentException("중복된 이메일 입니다.");
+            throw new CustomException(DUPLICATE_IDENTIFIER);
         }
 
         Optional<Member> findMemberByNickname = memberRepository.findByNickname(nickname);
         if (findMemberByNickname.isPresent()){
-            throw new IllegalArgumentException("중복된 닉네임 입니다.");
+            throw new CustomException(DUPLICATE_NICKNAME);
         }
 
         Member member = new Member(email, password, nickname);
@@ -59,10 +62,10 @@ public class MemberService {
         String password = requestDto.getPassword();
 
         Member findMember = memberRepository.findByEmail(email).orElseThrow(
-                () -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+                () -> new CustomException(USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, findMember.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 틀립니다.");
+            throw new CustomException(INVALID_PASSWORD);
         }
 
         TokenDto tokenDto = jwtUtil.createAllToken(email);
