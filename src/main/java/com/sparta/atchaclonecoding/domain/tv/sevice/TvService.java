@@ -1,6 +1,7 @@
 package com.sparta.atchaclonecoding.domain.tv.sevice;
 
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import com.sparta.atchaclonecoding.domain.tv.dto.TvDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.tv.dto.TvResponseDto;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
@@ -23,8 +24,8 @@ import static com.sparta.atchaclonecoding.exception.ErrorCode.TV_NOT_FOUND;
 public class TvService {
     private final TvRepository tvRepository;
 
-    // Tv 전체조회
-    @Transactional(readOnly = true)
+    // Tv 목록 조회
+    @Transactional
     public ResponseEntity<Message> getTvPrograms(Member member) {
         List<TvResponseDto> tvList = tvRepository.findAll().stream().map(TvResponseDto::new).collect(Collectors.toList());
         Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tvList);
@@ -32,19 +33,20 @@ public class TvService {
     }
 
 
-    // Tv 상세조회
-    @Transactional(readOnly = true)
+    // Tv 상세 조회
+    @Transactional
     public ResponseEntity<Message> getTvProgram(Long tvId, Member member) {
         Tv tv = tvRepository.findById(tvId).orElseThrow(
                 () -> new CustomException(TV_NOT_FOUND)
         );
-        Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tv);
+        TvDetailResponseDto tvDetailResponseDto = new TvDetailResponseDto(tv);
+        Message message = Message.setSuccess(StatusEnum.OK, "요청성공", tvDetailResponseDto);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 
     // TV 검색
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<Message> searchTv(String searchKeyword) {
         List<TvResponseDto> tvs = tvRepository.findAllBySearchKeyword(searchKeyword).stream().map(TvResponseDto::new).toList();
 
