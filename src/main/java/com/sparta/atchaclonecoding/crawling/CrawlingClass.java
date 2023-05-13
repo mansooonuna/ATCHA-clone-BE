@@ -7,12 +7,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 public class CrawlingClass {
-    private final CrawlingSample crawlingSample;
+    private final MovieCrawlingController movieCrawlingController;
+    private final TvCrawlingController tvCrawlingController;
 
     @Autowired
-    public CrawlingClass(CrawlingSample crawlingSample) {
-        this.crawlingSample = crawlingSample;
-        System.out.println("크롤링돼랏");
-        crawlingSample.process();
+    public CrawlingClass(MovieCrawlingController movieCrawlingController,
+                         TvCrawlingController tvCrawlingController) {
+        this.movieCrawlingController = movieCrawlingController;
+        this.tvCrawlingController = tvCrawlingController;
+        System.out.println("-------------TV---------------");
+        tvCrawlingController.process();
+        System.out.println("-------------MOVIE---------------");
+        movieCrawlingController.process();
     }
 }
