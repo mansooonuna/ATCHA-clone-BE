@@ -25,6 +25,7 @@ import static com.sparta.atchaclonecoding.exception.ErrorCode.MOVIE_NOT_FOUND;
 public class MovieService {
     private final MovieRepository movieRepository;
 
+    // 영화 목록 조회
     @Transactional
     public ResponseEntity<List<MovieResponseDto>> getMovieList(Member member) {
         List<MovieResponseDto> movieResponseDtoList = movieRepository.findAll()
@@ -33,7 +34,8 @@ public class MovieService {
                                                         .collect(Collectors.toList());
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , movieResponseDtoList), HttpStatus.OK);
     }
-
+    // 영화 상세 조회
+    @Transactional
     public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, Member member) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
                 () -> new CustomException(MOVIE_NOT_FOUND)

@@ -18,17 +18,15 @@ public class TvController {
 
     private final TvService tvService;
 
-    // Tv 전체조회
     @Operation(summary = "TV 조회 메서드", description = "TV 프로그램 목록 조회하는 메서드입니다.")
     @GetMapping("/tvs")
     public ResponseEntity<Message> getTvPrograms(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return tvService.getTvPrograms(userDetails.getMember());
     }
 
-    // Tv 상세조회
     @Operation(summary = "TV 상세 조회 메서드", description = "선택한 TV 프로그램의 상세 조회하는 메서드입니다.")
-    @GetMapping("/tvs/{tv-id}")
-    public ResponseEntity<Message> getTvProgram(@PathVariable(name = "tv-id")Long tvId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/tvs/{tvId}")
+    public ResponseEntity<Message> getTvProgram(@PathVariable Long tvId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return tvService.getTvProgram(tvId, userDetails.getMember());
     }
 
