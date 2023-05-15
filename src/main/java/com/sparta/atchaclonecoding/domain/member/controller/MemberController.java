@@ -52,6 +52,7 @@ public class MemberController {
         return memberService.getMypage(userDetails.getMember());
     }
 
+    @Operation(summary = "마이페이지 수정", description = "마이페이지 수정하는 메서드입니다.")
     @PutMapping(value = "/mypage",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Message> profileUpdate(@RequestPart("imageFile")MultipartFile image,
