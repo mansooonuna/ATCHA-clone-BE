@@ -37,4 +37,9 @@ public class ReviewTv {
         this.tv = tv;
         this.member = member;
     }
+
+    public void update(ReviewRequestDto requestDto) {
+        this.star = requestDto.getStar();
+        this.content = requestDto.getContent();
+    }
 }

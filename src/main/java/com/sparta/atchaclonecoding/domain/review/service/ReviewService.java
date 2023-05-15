@@ -19,9 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReviewService {
 
@@ -31,7 +34,6 @@ public class ReviewService {
     private final TvRepository tvRepository;
 
     // 영화 리뷰 작성
-    @Transactional
     public ResponseEntity<Message> addReviewMovie(Long movieId, ReviewRequestDto requestDto, Member member) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
                 () -> new CustomException(MOVIE_NOT_FOUND)
@@ -59,4 +61,23 @@ public class ReviewService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+    // Movie 리뷰 수정
+    public ResponseEntity<Message> updateReviewMovie(Long movieReviewId, ReviewRequestDto requestDto, Member member) {
+        ReviewMovie findMovieReview = reviewMovieRepository.findById(movieReviewId).orElseThrow(
+                () -> new CustomException(REVIEW_NOT_FOUND)
+        );
+        findMovieReview.update(requestDto);
+        Message message = Message.setSuccess(StatusEnum.OK, "리뷰 수정 성공");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    // Tv 리뷰 수정
+    public ResponseEntity<Message> updateReviewTv(Long tvReviewId, ReviewRequestDto requestDto, Member member) {
+        ReviewTv findTvReview = reviewTvRepository.findById(tvReviewId).orElseThrow(
+                () -> new CustomException(REVIEW_NOT_FOUND)
+        );
+        findTvReview.update(requestDto);
+        Message message = Message.setSuccess(StatusEnum.OK, "리뷰 수정 성공");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
 }

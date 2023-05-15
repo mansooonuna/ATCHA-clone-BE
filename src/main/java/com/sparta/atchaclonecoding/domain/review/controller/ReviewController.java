@@ -30,4 +30,16 @@ public class ReviewController {
         return reviewService.addReviewTv(tvId, requestDto, userDetails.getMember());
     }
 
+    @Operation(summary = "Movie 리뷰 수정 메서드", description = "Movie 리뷰 수정하는 메서드입니다.")
+    @PutMapping("/movies/{movieReviewId}")
+    public ResponseEntity<Message> updateReviewMovie(@PathVariable Long movieReviewId, @RequestBody ReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reviewService.updateReviewMovie(movieReviewId, requestDto, userDetails.getMember());
+    }
+
+    @Operation(summary = "TV 리뷰 수정 메서드", description = "TV 리뷰 수정하는 메서드입니다.")
+    @PutMapping("/tvs/{tvReviewId}")
+    public ResponseEntity<Message> updateReviewTv(@PathVariable Long tvReviewId, @RequestBody ReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reviewService.updateReviewTv(tvReviewId, requestDto, userDetails.getMember());
+    }
+
 }
