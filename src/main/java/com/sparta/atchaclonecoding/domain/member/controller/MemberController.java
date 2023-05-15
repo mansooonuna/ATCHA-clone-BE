@@ -1,6 +1,7 @@
 package com.sparta.atchaclonecoding.domain.member.controller;
 
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
@@ -11,9 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,5 +50,13 @@ public class MemberController {
     @GetMapping("/mypage")
     public ResponseEntity<Message> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return memberService.getMypage(userDetails.getMember());
+    }
+
+    @PutMapping(value = "/mypage",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> profileUpdate(@RequestPart("imageFile")MultipartFile image,
+                                                 @RequestPart ProfileRequestDto profileRequestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
     }
 }
