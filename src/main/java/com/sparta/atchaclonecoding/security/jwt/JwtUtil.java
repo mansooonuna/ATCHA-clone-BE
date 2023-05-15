@@ -34,7 +34,6 @@ public class JwtUtil {
     public static final String REFRESH_KEY = "REFRESH_KEY";
     private static final long ACCESS_TIME = Duration.ofMinutes(60).toMillis();
     private static final long REFRESH_TIME = Duration.ofDays(7).toMillis();
-    private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;

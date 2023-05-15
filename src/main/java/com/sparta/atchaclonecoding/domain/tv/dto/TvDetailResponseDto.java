@@ -1,6 +1,5 @@
 package com.sparta.atchaclonecoding.domain.tv.dto;
 
-import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
 import com.sparta.atchaclonecoding.domain.person.entity.PersonTv;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class TvDetailResponseDto {
     private List<PersonTv> personTvList;
 
 
-    public TvDetailResponseDto(Tv tv, List<PersonTv> personTvList) {
+    public TvDetailResponseDto(Tv tv) {
         this.tvId = tv.getId();
         this.title = tv.getTitle();
         this.star = tv.getStar();
@@ -29,7 +28,6 @@ public class TvDetailResponseDto {
         this.age = tv.getAge();
         this.image = tv.getImage();
         this.information = tv.getInformation();
-        this.personTvList = personTvList;
     }
 }
 
