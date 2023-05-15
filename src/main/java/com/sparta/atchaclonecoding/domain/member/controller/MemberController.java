@@ -3,33 +3,47 @@ package com.sparta.atchaclonecoding.domain.member.controller;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
+import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/atcha/members")
+@Tag(name = "MemberController", description = "유저 관련 API")
 public class MemberController {
 
     private final MemberService memberService;
 
-    //회원가입
+    @Operation(summary = "회원가입 메서드", description = "회원가입 메서드입니다.")
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@RequestBody SignupRequestDto requestDto){
+    public ResponseEntity<Message> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return memberService.signup(requestDto);
     }
 
-    //로그인
+    @Operation(summary = "로그인 메서드", description = "로그인 메서드입니다.")
     @PostMapping("/login")
-    public ResponseEntity<Message> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response){
+    public ResponseEntity<Message> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         return memberService.login(requestDto, response);
     }
 
+    @Operation(summary = "로그아웃 메서드", description = "로그아웃 메서드입니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<Message> logout(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) {
+        return memberService.logout(userDetails.getMember(), request);
+    }
 
+    @Operation(summary = "마이페이지 조회", description = "마이페이지 조회하는 메서드입니다.")
+    @GetMapping("/mypage")
+    public ResponseEntity<Message> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memberService.getMypage(userDetails.getMember());
+    }
 }

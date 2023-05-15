@@ -1,3 +1,4 @@
+
 package com.sparta.atchaclonecoding.crawling;
 
 import com.sparta.atchaclonecoding.domain.movie.entity.Movie;

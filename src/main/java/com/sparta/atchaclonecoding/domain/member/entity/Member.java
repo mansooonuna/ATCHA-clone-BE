@@ -2,7 +2,6 @@ package com.sparta.atchaclonecoding.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @JsonIgnore
@@ -33,5 +33,8 @@ public class Member {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
+    }
+    public void changePassword(String password) {
+        this.password = password;
     }
 }
