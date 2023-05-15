@@ -5,6 +5,7 @@ import com.sparta.atchaclonecoding.domain.movie.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.dto.MovieResponseDto;
 import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
 import com.sparta.atchaclonecoding.domain.movie.repository.MovieRepository;
+import com.sparta.atchaclonecoding.domain.tv.dto.TvResponseDto;
 import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
@@ -42,5 +43,18 @@ public class MovieService {
         );
         MovieDetailResponseDto movieDetailResponseDto = new MovieDetailResponseDto(movie);
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 상세 조회 성공", movieDetailResponseDto), HttpStatus.OK);
+    }
+
+    // 영화 검색
+    @Transactional
+    public ResponseEntity<Message> searchMovie(String searchKeyword) {
+        List<MovieResponseDto> movies = movieRepository.findAllBySearchKeyword(searchKeyword).stream().map(MovieResponseDto::new).toList();
+
+        Message message;
+        if (movies.isEmpty()) {
+            message = Message.setSuccess(StatusEnum.OK, "검색 결과 없음", movies);
+        }
+        message = Message.setSuccess(StatusEnum.OK, "요청성공", movies);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
