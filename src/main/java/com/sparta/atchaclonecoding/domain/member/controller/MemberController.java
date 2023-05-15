@@ -65,14 +65,15 @@ public class MemberController {
 
     @Operation(summary = "비밀번호 변경", description = "이메일 확인 후 비밀번호 변경 메서드입니다.")
     @PostMapping("/confirm-email")
-    public ResponseEntity<Message> confirmEmailToFindPassword(@Valid @RequestParam String token, @Valid @RequestBody ChangePwRequestDto requestDto){
+    public ResponseEntity<Message> confirmEmailToFindPassword(@Valid @RequestParam String token, @Valid @RequestBody ChangePwRequestDto requestDto) {
         return memberService.confirmEmailToFindPassword(token, requestDto);
+    }
 
     @PutMapping(value = "/mypage",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Message> profileUpdate(@RequestPart("imageFile")MultipartFile image,
-                                                 @RequestPart ProfileRequestDto profileRequestDto,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+                consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> profileUpdate (@RequestPart("imageFile") MultipartFile image,
+                @RequestPart ProfileRequestDto profileRequestDto,
+                @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
     }
 }
