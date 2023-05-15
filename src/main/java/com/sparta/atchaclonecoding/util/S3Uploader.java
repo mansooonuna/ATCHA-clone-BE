@@ -30,14 +30,13 @@ public class S3Uploader {
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
-//    public String uploadImage(String image) throws IOException{
-//        String fileName = image;
-//        ObjectMetadata objMeta = new ObjectMetadata();
-//        objMeta.setContentLength(fileName.length());
-//        amazonS3.putObject(bucket, fileName, String.valueOf(objMeta));
-//
-//        return amazonS3.getUrl(bucket, fileName).toString();
-//    }
+    public String uploadImage(String image){
+        ObjectMetadata objMeta = new ObjectMetadata();
+        objMeta.setContentLength(image.length());
+        amazonS3.putObject(bucket, image, image);
+
+        return amazonS3.getUrl(bucket, image).toString();
+    }
 
     public boolean delete(String fileUrl) {
         try {

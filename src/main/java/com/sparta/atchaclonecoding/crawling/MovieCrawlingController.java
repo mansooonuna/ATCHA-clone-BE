@@ -4,6 +4,7 @@ import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
 import com.sparta.atchaclonecoding.domain.movie.repository.MovieRepository;
 import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
 import com.sparta.atchaclonecoding.domain.person.repository.PersonMovieRepository;
+import com.sparta.atchaclonecoding.util.S3Uploader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,6 +13,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +23,22 @@ public class MovieCrawlingController {
     private MovieRepository movieRepository;
     @Autowired
     private PersonMovieRepository personMovieRepository;
+    @Autowired
+    private S3Uploader s3Uploader;
     private WebDriver driver;
 
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNL4a4vN";
 
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
-        System.setProperty("webdriver.chrome.driver", "./chromedriver");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
 
         // 크롬 드라이버 옵션 설정
         ChromeOptions options = new ChromeOptions();
 //        options.addArguments("--headless"); // 헤드리스 모드로 실행
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
-
+        options.addArguments("--remote-allow-origins=*");
         // 크롬 드라이버 셋팅 (드라이버 설치한 경로 입력) 및 옵션 적용
         driver = new ChromeDriver(options);
 
@@ -43,6 +47,8 @@ public class MovieCrawlingController {
         } catch (InterruptedException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt(); //인터럽트 상태 복원
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         driver.close();    //탭 닫기
@@ -52,14 +58,14 @@ public class MovieCrawlingController {
     /**
      * data가져오기 : title, star, genre, time, age, image, information, personName, personJob
      */
-    private List<String> getDataList() throws InterruptedException {
+    private List<String> getDataList() throws InterruptedException, IOException {
         List<String> list = new ArrayList<>();
 
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(1000); //브라우저 로딩될때까지 잠시 기다린다.
 
-        int count = 5;
-        while (count <= 20) {
+        int count = 1;
+        while (count <= 5) {
 //            if(count == 7){
 //                count++;
 //                continue;
@@ -105,7 +111,7 @@ public class MovieCrawlingController {
                     .genre(genre)
                     .time(time)
                     .age(age)
-                    .image(image)
+                    .image(s3Uploader.uploadImage(image))
                     .information(information)
                     .build();
             movieRepository.save(movie);
