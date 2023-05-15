@@ -1,3 +1,4 @@
+
 package com.sparta.atchaclonecoding.crawling;
 
 import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
@@ -5,6 +6,7 @@ import com.sparta.atchaclonecoding.domain.movie.repository.MovieRepository;
 import com.sparta.atchaclonecoding.domain.person.entity.PersonMovie;
 import com.sparta.atchaclonecoding.domain.person.repository.PersonMovieRepository;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,6 +26,7 @@ public class MovieCrawlingController {
     private WebDriver driver;
 
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNL4a4vN";
+
 
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
@@ -46,7 +49,7 @@ public class MovieCrawlingController {
         }
 
         driver.close();    //탭 닫기
-//        driver.quit();    //브라우저 닫기
+        driver.quit();    //브라우저 닫기
     }
 
     /**
@@ -54,32 +57,42 @@ public class MovieCrawlingController {
      */
     private List<String> getDataList() throws InterruptedException {
         List<String> list = new ArrayList<>();
-
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(1000); //브라우저 로딩될때까지 잠시 기다린다.
 
-        int count = 5;
+        int count = 1;
         while (count <= 20) {
-//            if(count == 7){
-//                count++;
-//                continue;
-//            }
             WebElement images = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > section > div > div > div > section.css-1tywu13 > div:nth-child(2) > div > ul > li:nth-child("+count+")"));
             images.click();
             Thread.sleep(2000);
 
-            WebElement titleElement = driver.findElement(By.className("css-171k8ad-Title"));
-            WebElement starElement = driver.findElement(By.className("css-og1gu8-ContentRatings"));
-            WebElement genreElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(2)"));
-            WebElement timeElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)"));
-            WebElement ageElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)"));
-            WebElement imageElement =driver.findElement(By.className("css-qhzw1o-StyledImg"));
-            WebElement informationElement = driver.findElement(By.className("css-kywn6v-StyledText"));
-            List<WebElement> personElements = driver.findElements(By.className("css-1aaqvgs-InnerPartOfListWithImage"));
-//            WebElement personNameEliment = driver.findElement(By.className("css-1aaqvgs-InnerPartOfListWithImage"));
-//            WebElement personJobEliment = driver.findElement(By.className("css-1evnpxk-StyledSubtitle"));
-//#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(2)
-//#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)
+            WebElement titleElement, starElement, genreElement, timeElement, ageElement, imageElement, informationElement = null;
+            List<WebElement> personElements = null;
+
+            try {
+                titleElement = driver.findElement(By.className("css-171k8ad-Title"));
+                starElement = driver.findElement(By.className("css-og1gu8-ContentRatings"));
+                genreElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(2)"));
+                timeElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)"));
+                ageElement = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > div.css-10ofaaw > div > div > div > div:nth-child(1) > div.css-uvsgck > div > div > section:nth-child(2) > div:nth-child(2) > div > article > div.css-wvh1uf-Summary.eokm2781 > span:nth-child(4)"));
+                imageElement = driver.findElement(By.className("css-qhzw1o-StyledImg"));
+                informationElement = driver.findElement(By.className("css-kywn6v-StyledText"));
+                personElements = driver.findElements(By.className("css-1aaqvgs-InnerPartOfListWithImage"));
+                Thread.sleep(1000);
+            } catch (NoSuchElementException e) {
+                Thread.sleep(2000);
+                driver.navigate().back();
+
+                //더보기를 눌러야 하는 count로 돌아갔을 때
+                if (count % 12 == 0) {
+                    WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
+                    nextButton.click();
+                    Thread.sleep(2000);
+                }
+                count++;
+                continue;
+            }
+
             String title = titleElement.getText();
             double star = Double.parseDouble(starElement.getText().substring(4,7));
             String genre = genreElement.getText();
@@ -90,14 +103,6 @@ public class MovieCrawlingController {
             age = age.substring(age.indexOf('·')+2);
             String image = imageElement.getAttribute("src");
             String information = informationElement.getText();
-
-            System.out.println(title);
-            System.out.println(star);
-            System.out.println(genre);
-            System.out.println(time);
-            System.out.println(age);
-            System.out.println(image);
-            System.out.println(information);
 
             Movie movie = Movie.builder()
                     .title(title)
@@ -110,19 +115,29 @@ public class MovieCrawlingController {
                     .build();
             movieRepository.save(movie);
 
-            for (int i = 0; i < 6; i++) {
-                String personName = personElements.get(i).getAttribute("title");
-                personName = personName.substring(0,personName.indexOf('('));
-                String personJob = personElements.get(i).getAttribute("title");
-                personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
-                System.out.println(personName);
-                System.out.println(personJob);
-                PersonMovie personMovie = PersonMovie.builder()
-                        .name(personName)
-                        .role(personJob)
-                        .build();
-                personMovie.addMovie(movie);
-                personMovieRepository.save(personMovie);
+            int i = 0;
+            while (i < 6) {
+                String personName = null;
+                String personJob = null;
+
+                try {
+                    personName = personElements.get(i).getAttribute("title");
+                    personJob = personElements.get(i).getAttribute("title");
+                    personName = personName.substring(0,personName.indexOf('('));
+                    personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
+                    PersonMovie personMovie = PersonMovie.builder()
+                            .name(personName)
+                            .role(personJob)
+                            .build();
+                    personMovie.addMovie(movie);
+                    personMovieRepository.save(personMovie);
+                } catch (NoSuchElementException | IndexOutOfBoundsException e) {
+                    Thread.sleep(1000);
+                    driver.navigate().back();
+                    count++;
+                    continue;
+                }
+                i++;
             }
 
             driver.navigate().back();
@@ -130,7 +145,7 @@ public class MovieCrawlingController {
             if (count % 12 == 0) {
                 WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
                 nextButton.click();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             }
             count++;
         }

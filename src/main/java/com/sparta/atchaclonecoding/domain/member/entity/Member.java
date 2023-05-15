@@ -39,12 +39,7 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void update(ProfileRequestDto profileRequestDto){
-        this.nickname = profileRequestDto.getNickname();
-        this.image = profileRequestDto.getImage();
-    }
     public void changePassword(String password) {
         this.password = password;
     }
-
 }
