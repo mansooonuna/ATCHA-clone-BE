@@ -80,4 +80,32 @@ public class ReviewService {
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 수정 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
+
+    public ResponseEntity<Message> deleteReviewMovie(Long movieReviewId, Member member) {
+        ReviewMovie findMovieReview = reviewMovieRepository.findById(movieReviewId).orElseThrow(
+                () -> new CustomException(REVIEW_NOT_FOUND)
+        );
+
+        if (findMovieReview.isDeleted()) {
+            throw new CustomException(REVIEW_NOT_FOUND);
+        }
+
+        reviewMovieRepository.deleteById(movieReviewId);
+        Message message = Message.setSuccess(StatusEnum.OK, "리뷰 삭제 성공");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Message> deleteReviewTv(Long tvReviewId, Member member) {
+        ReviewTv findTvReview = reviewTvRepository.findById(tvReviewId).orElseThrow(
+                () -> new CustomException(REVIEW_NOT_FOUND)
+        );
+
+        if (findTvReview.isDeleted()) {
+            throw new CustomException(REVIEW_NOT_FOUND);
+        }
+
+        reviewTvRepository.deleteById(tvReviewId);
+        Message message = Message.setSuccess(StatusEnum.OK, "리뷰 삭제 성공");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
 }

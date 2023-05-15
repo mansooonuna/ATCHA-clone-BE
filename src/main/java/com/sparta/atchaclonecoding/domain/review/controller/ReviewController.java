@@ -24,6 +24,7 @@ public class ReviewController {
     public ResponseEntity<Message> addReviewMovie(@PathVariable Long movieId, @RequestBody ReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return reviewService.addReviewMovie(movieId, requestDto, userDetails.getMember());
     }
+
     @Operation(summary = "TV 리뷰 작성 메서드", description = "TV 리뷰 작성하는 메서드입니다.")
     @PostMapping("/tvs/{tvId}")
     public ResponseEntity<Message> addReviewTv(@PathVariable Long tvId, @RequestBody ReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -41,5 +42,18 @@ public class ReviewController {
     public ResponseEntity<Message> updateReviewTv(@PathVariable Long tvReviewId, @RequestBody ReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return reviewService.updateReviewTv(tvReviewId, requestDto, userDetails.getMember());
     }
+
+    @Operation(summary = "Movie 리뷰 삭제 메서드", description = "Movie 리뷰 삭제하는 메서드입니다.")
+    @DeleteMapping("/movies/{movieReviewId}")
+    public ResponseEntity<Message> deleteReviewMovie(@PathVariable Long movieReviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reviewService.deleteReviewMovie(movieReviewId, userDetails.getMember());
+    }
+
+    @Operation(summary = "Tv 리뷰 삭제 메서드", description = "Tv 리뷰 삭제하는 메서드입니다.")
+    @DeleteMapping("/tvs/{tvReviewId}")
+    public ResponseEntity<Message> deleteReviewTv(@PathVariable Long tvReviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return reviewService.deleteReviewTv(tvReviewId, userDetails.getMember());
+    }
+
 
 }

@@ -6,10 +6,14 @@ import com.sparta.atchaclonecoding.domain.review.dto.ReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE review_movie SET is_deleted = true WHERE id = ? ")
 public class ReviewMovie {
 
     @Id
@@ -29,6 +33,8 @@ public class ReviewMovie {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    private boolean isDeleted = Boolean.FALSE;
 
     public ReviewMovie(Movie movie, ReviewRequestDto requestDto, Member member) {
         this.star = requestDto.getStar();

@@ -7,10 +7,14 @@ import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE review_tv SET is_deleted = true WHERE id = ? ")
 public class ReviewTv {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +34,7 @@ public class ReviewTv {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private boolean isDeleted = Boolean.FALSE;
 
     public ReviewTv(Tv tv, ReviewRequestDto requestDto, Member member) {
         this.star = requestDto.getStar();
