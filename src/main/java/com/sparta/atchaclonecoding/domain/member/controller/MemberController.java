@@ -5,7 +5,6 @@ import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
-import com.sparta.atchaclonecoding.domain.member.email.ConfirmationTokenService;
 import com.sparta.atchaclonecoding.domain.member.email.EmailService;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
@@ -59,7 +58,7 @@ public class MemberController {
 
     @Operation(summary = "이메일 전송", description = "비밀번호 찾기를 위한 이메일 전송 메서드입니다.")
     @PostMapping("/find-password")
-    public String sendEmailToFindPassword(@RequestBody EmailRequestDto requestDto) throws Exception {
+    public ResponseEntity<Message> sendEmailToFindPassword(@RequestBody EmailRequestDto requestDto) throws Exception {
         return emailService.sendSimpleMessage(requestDto);
     }
 
