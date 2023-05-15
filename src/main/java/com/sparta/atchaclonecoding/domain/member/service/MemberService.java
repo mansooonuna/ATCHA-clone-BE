@@ -23,8 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -42,6 +42,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final S3Uploader s3Uploader;
+
 
     //회원가입
     public ResponseEntity<Message> signup(SignupRequestDto requestDto) {
@@ -135,12 +136,11 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+
     // 헤더 셋팅 - 리프레시 토큰 미적용
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 //        response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
     }
-
-
 
 }

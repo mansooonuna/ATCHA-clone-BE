@@ -39,7 +39,7 @@ public class MovieService {
     @Transactional
     public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, Member member) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(
-                () -> new NoSuchElementException("영화가 존재하지 않습니다.")
+                () -> new CustomException(MOVIE_NOT_FOUND)
         );
         MovieDetailResponseDto movieDetailResponseDto = new MovieDetailResponseDto(movie);
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 상세 조회 성공", movieDetailResponseDto), HttpStatus.OK);
