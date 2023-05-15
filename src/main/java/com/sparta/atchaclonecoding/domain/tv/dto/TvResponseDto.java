@@ -1,12 +1,7 @@
 package com.sparta.atchaclonecoding.domain.tv.dto;
 
-import com.sparta.atchaclonecoding.domain.person.entity.Person;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class TvResponseDto {
