@@ -3,6 +3,7 @@ package com.sparta.atchaclonecoding.domain.member.controller;
 import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.email.ConfirmationTokenService;
 import com.sparta.atchaclonecoding.domain.member.email.EmailService;
@@ -15,9 +16,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,5 +67,12 @@ public class MemberController {
     @PostMapping("/confirm-email")
     public ResponseEntity<Message> confirmEmailToFindPassword(@Valid @RequestParam String token, @Valid @RequestBody ChangePwRequestDto requestDto){
         return memberService.confirmEmailToFindPassword(token, requestDto);
+
+    @PutMapping(value = "/mypage",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> profileUpdate(@RequestPart("imageFile")MultipartFile image,
+                                                 @RequestPart ProfileRequestDto profileRequestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
     }
 }
