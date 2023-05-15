@@ -4,7 +4,10 @@ import com.sparta.atchaclonecoding.domain.person.entity.PersonTv;
 import com.sparta.atchaclonecoding.domain.person.repository.PersonTvRepository;
 import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import com.sparta.atchaclonecoding.domain.tv.repository.TvRepository;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ public class TvCrawlingController {
     @Autowired
     private PersonTvRepository personTvRepository;
 
-    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdkwR0gx9";
+    private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdb6KgyQN";
 
     public void process() {
         System.setProperty("webdriver.chrome.driver", "./chromedriver");
@@ -49,12 +52,11 @@ public class TvCrawlingController {
      */
     private List<String> getDataList() throws InterruptedException {
         List<String> list = new ArrayList<>();
-
         driver.get(url);
         Thread.sleep(1000);
 
         int count = 1;
-        while (count <= 3) {
+        while (count <= 20) {
             WebElement images = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > section > div > div > div > section.css-1tywu13 > div:nth-child(2) > div > ul > li:nth-child("+count+")"));
             images.click();
             Thread.sleep(2000);
@@ -74,6 +76,14 @@ public class TvCrawlingController {
             } catch (NoSuchElementException e) {
                 Thread.sleep(2000);
                 driver.navigate().back();
+                Thread.sleep(1000);
+
+                //더보기를 눌러야 하는 count로 돌아갔을 때
+                if (count % 12 == 0) {
+                    WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
+                    nextButton.click();
+                    Thread.sleep(2000);
+                }
                 count++;
                 continue;
         }
@@ -95,20 +105,31 @@ public class TvCrawlingController {
                     .image(image)
                     .information(information)
                     .build();
-
             tvRepository.save(tv);
 
-            for (int i = 0; i < 6; i++) {
-                String personName = personElements.get(i).getAttribute("title");
-                personName = personName.substring(0,personName.indexOf('('));
-                String personJob = personElements.get(i).getAttribute("title");
-                personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
-                PersonTv personTv = PersonTv.builder()
-                        .name(personName)
-                        .role(personJob)
-                        .build();
-                personTv.addTv(tv);
-                personTvRepository.save(personTv);
+            int i = 0;
+            while (i < 6) {
+                String personName = null;
+                String personJob = null;
+
+                try {
+                    personName = personElements.get(i).getAttribute("title");
+                    personJob = personElements.get(i).getAttribute("title");
+                    personName = personName.substring(0,personName.indexOf('('));
+                    personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
+                    PersonTv personTv = PersonTv.builder()
+                            .name(personName)
+                            .role(personJob)
+                            .build();
+                    personTv.addTv(tv);
+                    personTvRepository.save(personTv);
+                } catch (NoSuchElementException | IndexOutOfBoundsException e) {
+                    Thread.sleep(1000);
+                    driver.navigate().back();
+                    count++;
+                    continue;
+                }
+                i++;
             }
 
             driver.navigate().back();
@@ -116,7 +137,7 @@ public class TvCrawlingController {
             if (count % 12 == 0) {
                 WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
                 nextButton.click();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             }
             count++;
         }

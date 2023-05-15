@@ -26,6 +26,7 @@ public class MovieCrawlingController {
 
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNL4a4vN";
 
+
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
         System.setProperty("webdriver.chrome.driver", "./chromedriver");
@@ -55,12 +56,11 @@ public class MovieCrawlingController {
      */
     private List<String> getDataList() throws InterruptedException {
         List<String> list = new ArrayList<>();
-
         driver.get(url);    //브라우저에서 url로 이동한다.
         Thread.sleep(1000); //브라우저 로딩될때까지 잠시 기다린다.
 
         int count = 1;
-        while (count <= 3) {
+        while (count <= 20) {
             WebElement images = driver.findElement(By.cssSelector("#root > div > div.css-1xm32e0 > section > div > section > div > div > div > section.css-1tywu13 > div:nth-child(2) > div > ul > li:nth-child("+count+")"));
             images.click();
             Thread.sleep(2000);
@@ -81,6 +81,13 @@ public class MovieCrawlingController {
             } catch (NoSuchElementException e) {
                 Thread.sleep(2000);
                 driver.navigate().back();
+
+                //더보기를 눌러야 하는 count로 돌아갔을 때
+                if (count % 12 == 0) {
+                    WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
+                    nextButton.click();
+                    Thread.sleep(2000);
+                }
                 count++;
                 continue;
             }
@@ -107,17 +114,29 @@ public class MovieCrawlingController {
                     .build();
             movieRepository.save(movie);
 
-            for (int i = 0; i < 6; i++) {
-                String personName = personElements.get(i).getAttribute("title");
-                personName = personName.substring(0,personName.indexOf('('));
-                String personJob = personElements.get(i).getAttribute("title");
-                personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
-                PersonMovie personMovie = PersonMovie.builder()
-                        .name(personName)
-                        .role(personJob)
-                        .build();
-                personMovie.addMovie(movie);
-                personMovieRepository.save(personMovie);
+            int i = 0;
+            while (i < 6) {
+                String personName = null;
+                String personJob = null;
+
+                try {
+                    personName = personElements.get(i).getAttribute("title");
+                    personJob = personElements.get(i).getAttribute("title");
+                    personName = personName.substring(0,personName.indexOf('('));
+                    personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
+                    PersonMovie personMovie = PersonMovie.builder()
+                            .name(personName)
+                            .role(personJob)
+                            .build();
+                    personMovie.addMovie(movie);
+                    personMovieRepository.save(personMovie);
+                } catch (NoSuchElementException | IndexOutOfBoundsException e) {
+                    Thread.sleep(1000);
+                    driver.navigate().back();
+                    count++;
+                    continue;
+                }
+                i++;
             }
 
             driver.navigate().back();
@@ -125,7 +144,7 @@ public class MovieCrawlingController {
             if (count % 12 == 0) {
                 WebElement nextButton = driver.findElement(By.className("css-1d4r906-StylelessButton"));
                 nextButton.click();
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             }
             count++;
         }
