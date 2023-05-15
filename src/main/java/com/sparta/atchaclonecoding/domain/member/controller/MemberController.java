@@ -53,7 +53,7 @@ public class MemberController {
     }
 
     @Operation(summary = "이메일 전송", description = "비밀번호 찾기를 위한 이메일 전송 메서드입니다.")
-    @PostMapping("/find_password")
+    @PostMapping("/find-password")
     public String sendEmailToFindPassword(@RequestBody EmailRequestDto requestDto) throws Exception {
         return emailService.sendSimpleMessage(requestDto);
     }
