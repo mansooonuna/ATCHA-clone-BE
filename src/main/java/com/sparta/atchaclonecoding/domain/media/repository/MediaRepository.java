@@ -2,6 +2,8 @@ package com.sparta.atchaclonecoding.domain.media.repository;
 
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
 import com.sparta.atchaclonecoding.domain.media.entity.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +17,8 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
 
     Optional<Media> findByIdAndCategory(Long id, MediaType mediaType);
 
-    List<Media> findAllByCategory(MediaType mediaType);
+    Page<Media> findAllByCategory(MediaType mediaType, Pageable pageable);
 
-    Optional<Media> findMovieById(Long movieId);
+    List<Media> findAllByOrderByStarDesc();
 
 }
