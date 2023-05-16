@@ -17,6 +17,6 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
 
     List<Media> findAllByCategory(MediaType mediaType);
 
-    Optional<Media> findMovieById(Long movieId);
+    List<Media> findAllByOrderByStarDesc();
 
 }

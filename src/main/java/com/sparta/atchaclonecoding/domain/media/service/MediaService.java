@@ -2,6 +2,7 @@ package com.sparta.atchaclonecoding.domain.media.service;
 
 import com.sparta.atchaclonecoding.domain.casting.dto.CastingResponseDto;
 import com.sparta.atchaclonecoding.domain.casting.repository.CastingRepository;
+import com.sparta.atchaclonecoding.domain.media.dto.MediaRecommendResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.MediaResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.TvDetailResponseDto;
@@ -38,30 +39,30 @@ public class MediaService {
     @Transactional
     public ResponseEntity<List<MediaResponseDto>> getMediaList(Member member) {
         List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAll()
-                                                        .stream()
-                                                        .map(MediaResponseDto::new)
-                                                        .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
+                .stream()
+                .map(MediaResponseDto::new)
+                .collect(Collectors.toList());
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
     }
 
     // 전체 조회 - 영화
     @Transactional
     public ResponseEntity<List<MediaResponseDto>> getTvs(Member member) {
         List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.TV)
-                                                        .stream()
-                                                        .map(MediaResponseDto::new)
-                                                        .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
+                .stream()
+                .map(MediaResponseDto::new)
+                .collect(Collectors.toList());
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
     }
 
     // 전체 조회 - TV
     @Transactional
     public ResponseEntity<List<MediaResponseDto>> getMovies(Member member) {
         List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.MOVIE)
-                                                        .stream()
-                                                        .map(MediaResponseDto::new)
-                                                        .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
+                .stream()
+                .map(MediaResponseDto::new)
+                .collect(Collectors.toList());
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
     }
 
 
@@ -93,7 +94,7 @@ public class MediaService {
 
     // 전체 검색
     @Transactional
-    public ResponseEntity<Message> searchTv(String searchKeyword) {
+    public ResponseEntity<Message> searchTv(String searchKeyword, Member member) {
         List<MediaResponseDto> medias = mediaRepository.findAllBySearchKeyword(searchKeyword).stream().map(MediaResponseDto::new).toList();
 
         Message message;
@@ -102,5 +103,11 @@ public class MediaService {
         }
         message = Message.setSuccess(StatusEnum.OK, "요청성공", medias);
         return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    // 영화/TV 추천
+    public ResponseEntity<MediaRecommendResponseDto> recommendAll(Member member) {
+        List<MediaRecommendResponseDto> medias = mediaRepository.findAllByOrderByStarDesc().stream().map(MediaRecommendResponseDto::new).toList();
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "추천 영화/TV 조회 성공", medias), HttpStatus.OK);
     }
 }

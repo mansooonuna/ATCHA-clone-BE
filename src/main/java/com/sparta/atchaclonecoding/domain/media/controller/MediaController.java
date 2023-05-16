@@ -1,5 +1,6 @@
 package com.sparta.atchaclonecoding.domain.media.controller;
 
+import com.sparta.atchaclonecoding.domain.media.dto.MediaRecommendResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.MediaResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.TvDetailResponseDto;
@@ -56,8 +57,16 @@ public class MediaController {
 
     @Operation(summary = "전체 검색 메서드", description = "영화와 TV 프로그램을 검색하는 메서드입니다.")
     @GetMapping("/search")
-    public ResponseEntity<Message> searchAll(@RequestParam(value = "searchKeyword") String searchKeyword) {
-        return mediaService.searchTv(searchKeyword);
+    public ResponseEntity<Message> searchAll(@RequestParam(value = "searchKeyword") String searchKeyword, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mediaService.searchTv(searchKeyword, userDetails.getMember());
     }
+
+    @Operation(summary = "검색 기본 화면 추천 메서드", description = "검색 기본 화면에서 별점순으로 영화/TV 추천해주는 메서드입니다.")
+    @GetMapping("/search/all")
+    public ResponseEntity<MediaRecommendResponseDto> recommendAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return mediaService.recommendAll(userDetails.getMember());
+    }
+
+
 
 }
