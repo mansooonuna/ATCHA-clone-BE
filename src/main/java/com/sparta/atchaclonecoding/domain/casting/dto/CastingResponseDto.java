@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 public class CastingResponseDto {
     private Long id;
     private String role;
-    private Media media;
+    private String name;
     private String image;
 
 
     public CastingResponseDto(Casting casting) {
         this.id = casting.getId();
         this.role = casting.getRole();
-        this.media = casting.getMedia();
+        this.name = casting.getName();
         this.image = casting.getImage();
     }
 }
