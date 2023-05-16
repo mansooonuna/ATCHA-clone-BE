@@ -13,7 +13,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @NoArgsConstructor
 @Where(clause = "is_deleted = false")
-@SQLDelete(sql = "UPDATE review SET is_deleted = true WHERE id = ? ")
+@SQLDelete(sql = "UPDATE review SET is_deleted = true WHERE review_id = ? ")
 public class Review extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
