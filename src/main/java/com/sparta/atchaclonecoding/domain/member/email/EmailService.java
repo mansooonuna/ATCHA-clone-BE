@@ -2,6 +2,9 @@ package com.sparta.atchaclonecoding.domain.member.email;
 
 import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
+import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.internet.InternetAddress;
@@ -15,15 +18,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import com.sparta.atchaclonecoding.util.Message;
 
+import static com.sparta.atchaclonecoding.exception.ErrorCode.EMAIL_NOT_FOUND;
+import static com.sparta.atchaclonecoding.exception.ErrorCode.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender emailSender;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final MemberRepository memberRepository;
 
     private MimeMessage createMessage(String receiverEmail)throws Exception{
+        Member findMember = memberRepository.findByEmail(receiverEmail).orElseThrow(
+                () -> new CustomException(EMAIL_NOT_FOUND));
         MimeMessage  message = emailSender.createMimeMessage();
-        ConfirmationToken emailConfirmationToken = ConfirmationToken.createConfirmationToken(receiverEmail);
+        ConfirmationToken emailConfirmationToken = ConfirmationToken.createConfirmationToken(findMember.getEmail());
         confirmationTokenRepository.save(emailConfirmationToken);
 
         message.addRecipients(RecipientType.TO, receiverEmail);
