@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import com.sparta.atchaclonecoding.util.Message;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class EmailService {
         return message;
     }
 
-    public ResponseEntity<com.sparta.atchaclonecoding.util.Message> sendSimpleMessage(EmailRequestDto requestDto)throws Exception {
+    public ResponseEntity<Message> sendSimpleMessage(EmailRequestDto requestDto)throws Exception {
 
         MimeMessage message = createMessage(requestDto.getEmail());
         try{//예외처리
@@ -69,7 +70,7 @@ public class EmailService {
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        com.sparta.atchaclonecoding.util.Message successMessage = com.sparta.atchaclonecoding.util.Message.setSuccess(StatusEnum.OK, "이메일을 성공적으로 보냈습니다.");
+        Message successMessage = Message.setSuccess(StatusEnum.OK, "이메일을 성공적으로 보냈습니다.");
         return new ResponseEntity<>(successMessage, HttpStatus.OK);
     }
 }
