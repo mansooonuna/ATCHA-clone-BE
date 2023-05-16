@@ -23,6 +23,7 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 이메일을 찾을 수 없습니다." ),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 영화를 찾을 수 없습니다." ),
     TV_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 TV 프로그램을 찾을 수 없습니다." ),
+    MEDIA_NOT_FOUND(HttpStatus.NOT_FOUND,"Media를 찾을 수 없습니다." ),
     REVIEW_NOT_FOUND (HttpStatus.NOT_FOUND,"해당 리뷰를 찾을 수 없습니다." );
 
     private final HttpStatus httpStatus;

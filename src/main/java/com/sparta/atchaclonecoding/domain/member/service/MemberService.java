@@ -21,6 +21,7 @@ import com.sparta.atchaclonecoding.util.StatusEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -56,11 +58,13 @@ public class MemberService {
 
         Optional<Member> findMemberByEmail = memberRepository.findByEmail(email);
         if (findMemberByEmail.isPresent()) {
+            log.info("회원가입 중복된 이메일 사용");
             throw new CustomException(DUPLICATE_IDENTIFIER);
         }
 
         Optional<Member> findMemberByNickname = memberRepository.findByNickname(nickname);
         if (findMemberByNickname.isPresent()) {
+            log.info("회원가입 중복된 닉네임 사용");
             throw new CustomException(DUPLICATE_NICKNAME);
         }
 
