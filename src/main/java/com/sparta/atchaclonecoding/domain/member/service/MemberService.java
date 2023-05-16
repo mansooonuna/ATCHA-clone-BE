@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.domain.member.service;
 
 import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
@@ -28,10 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.IOException;
 import java.util.Optional;
 
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;

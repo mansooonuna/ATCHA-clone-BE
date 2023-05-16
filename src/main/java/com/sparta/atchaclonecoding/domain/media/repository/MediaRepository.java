@@ -14,11 +14,7 @@ import java.util.Optional;
 public interface MediaRepository extends JpaRepository<Media, Long> {
     @Query(value = "SELECT t FROM Media t WHERE t.title LIKE %:searchKeyword%")
     List<Media> findAllBySearchKeyword(@Param("searchKeyword") String searchKeyword);
-
     Optional<Media> findByIdAndCategory(Long id, MediaType mediaType);
-
     Page<Media> findAllByCategory(MediaType mediaType, Pageable pageable);
-
     List<Media> findAllByOrderByStarDesc();
-
 }

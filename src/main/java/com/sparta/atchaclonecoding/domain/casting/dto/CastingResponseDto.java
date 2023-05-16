@@ -1,8 +1,6 @@
 package com.sparta.atchaclonecoding.domain.casting.dto;
 
 import com.sparta.atchaclonecoding.domain.casting.entity.Casting;
-import com.sparta.atchaclonecoding.domain.media.entity.Media;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.domain.media.dto;
 
 import com.sparta.atchaclonecoding.domain.casting.dto.CastingResponseDto;
-import com.sparta.atchaclonecoding.domain.casting.entity.Casting;
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
 import com.sparta.atchaclonecoding.domain.review.dto.ReviewResponseDto;
 import lombok.Getter;
