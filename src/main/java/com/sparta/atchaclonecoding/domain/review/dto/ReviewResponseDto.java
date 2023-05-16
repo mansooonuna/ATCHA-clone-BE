@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.domain.review.dto;
 
 import com.sparta.atchaclonecoding.domain.review.entity.Review;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
