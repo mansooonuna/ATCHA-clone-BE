@@ -6,10 +6,7 @@ import com.sparta.atchaclonecoding.domain.media.entity.Media;
 import com.sparta.atchaclonecoding.domain.media.entity.MediaType;
 import com.sparta.atchaclonecoding.domain.media.repository.MediaRepository;
 import com.sparta.atchaclonecoding.util.S3Uploader;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +61,7 @@ public class MovieCrawlingController {
     private List<String> getDataList() throws InterruptedException, IOException {
         List<String> list = new ArrayList<>();
         driver.get(url);    //브라우저에서 url로 이동한다.
-        Thread.sleep(1000); //브라우저 로딩될때까지 잠시 기다린다.
+        Thread.sleep(2000); //브라우저 로딩될때까지 잠시 기다린다.
 
         int count = 1;
         while (count <= 20) {
@@ -110,6 +107,12 @@ public class MovieCrawlingController {
             String image = imageElement.getAttribute("src");
             String information = informationElement.getText();
 
+            System.out.println(title);
+            System.out.println(genre);
+            System.out.println(image);
+
+
+
             Media media = Media.builder()
                     .title(title)
                     .star(star)
@@ -121,32 +124,39 @@ public class MovieCrawlingController {
                     .information(information)
                     .build();
             mediaRepository.save(media);
+    
+            List<WebElement> personImageElements = driver.findElements(By.cssSelector("[class*=ProfilePhotoImage]"));
 
             int i = 0;
             while (i < 6) {
                 String personName = null;
                 String personJob = null;
+                String personImage = null;
 
                 try {
                     personName = personElements.get(i).getAttribute("title");
                     personJob = personElements.get(i).getAttribute("title");
+                    personImage = personImageElements.get(i).getCssValue("background-image");
                     personName = personName.substring(0,personName.indexOf('('));
                     personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
+                    personImage = personImage.substring(5,personImage.indexOf(')')-1);
+                    System.out.println(personImage);
+
                     Casting casting = Casting.builder()
                             .name(personName)
-                            .image("손 많이가는 호정")
+                            .image(s3Uploader.uploadImage(personImage))
                             .role(personJob)
                             .build();
                     casting.addMedia(media);
                     castingRepository.save(casting);
-                } catch (NoSuchElementException | IndexOutOfBoundsException e) {
-                    Thread.sleep(1000);
-                    driver.navigate().back();
-                    count++;
+                } catch (NoSuchElementException | IndexOutOfBoundsException | StaleElementReferenceException e) {
+                    Thread.sleep(2000);
+                    i++;
                     continue;
                 }
                 i++;
             }
+
 
             driver.navigate().back();
             Thread.sleep(2000);
