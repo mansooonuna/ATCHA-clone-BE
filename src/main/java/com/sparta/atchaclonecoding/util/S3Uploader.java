@@ -33,7 +33,7 @@ public class S3Uploader {
     public String uploadImage(String image) throws IOException{
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(image.length());
-        amazonS3.putObject(bucket, image, String.valueOf(objMeta));
+        amazonS3.putObject(bucket, image, image);
 
         return amazonS3.getUrl(bucket, image).toString();
     }
