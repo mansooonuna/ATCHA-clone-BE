@@ -47,21 +47,21 @@ public class MediaService {
     // 전체 조회 - 영화
     @Transactional
     public ResponseEntity<List<MediaResponseDto>> getTvs(Member member) {
-        List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.MOVIE)
-                                                        .stream()
-                                                        .map(MediaResponseDto::new)
-                                                        .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
-    }
-
-    // 전체 조회 - TV
-    @Transactional
-    public ResponseEntity<List<MediaResponseDto>> getMovies(Member member) {
         List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.TV)
                                                         .stream()
                                                         .map(MediaResponseDto::new)
                                                         .collect(Collectors.toList());
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
+    }
+
+    // 전체 조회 - TV
+    @Transactional
+    public ResponseEntity<List<MediaResponseDto>> getMovies(Member member) {
+        List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.MOVIE)
+                                                        .stream()
+                                                        .map(MediaResponseDto::new)
+                                                        .collect(Collectors.toList());
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공" , mediaResponseDtoList), HttpStatus.OK);
     }
 
 
@@ -71,7 +71,7 @@ public class MediaService {
         Media mediaMovie = mediaRepository.findByIdAndCategory(movieId, MediaType.MOVIE).orElseThrow(
                 () -> new CustomException(MOVIE_NOT_FOUND)
         );
-        List<CastingResponseDto> castingResponseDto = castingRepository.findAllById(movieId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
+        List<CastingResponseDto> castingResponseDto = castingRepository.findAllByMediaId(movieId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
         List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllById(movieId).stream()
                 .sorted(Comparator.comparing(Review::getCreatedAt).reversed()).map(ReviewResponseDto::new).collect(Collectors.toList());
         MovieDetailResponseDto movieDetailResponseDto = new MovieDetailResponseDto(mediaMovie, reviewResponseDto, castingResponseDto);
@@ -84,7 +84,7 @@ public class MediaService {
         Media mediaMovie = mediaRepository.findByIdAndCategory(tvId, MediaType.TV).orElseThrow(
                 () -> new CustomException(MOVIE_NOT_FOUND)
         );
-        List<CastingResponseDto> castingResponseDto = castingRepository.findAllById(tvId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
+        List<CastingResponseDto> castingResponseDto = castingRepository.findAllByMediaId(tvId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
         List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllById(tvId).stream()
                 .sorted(Comparator.comparing(Review::getCreatedAt).reversed()).map(ReviewResponseDto::new).collect(Collectors.toList());
         TvDetailResponseDto tvDetailResponseDto = new TvDetailResponseDto(mediaMovie, reviewResponseDto, castingResponseDto);
