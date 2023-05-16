@@ -17,10 +17,13 @@ import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.util.Message;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Comparator;
 import java.util.List;
@@ -37,33 +40,25 @@ public class MediaService {
 
     // 전체 조회
     @Transactional
-    public ResponseEntity<List<MediaResponseDto>> getMediaList(Member member) {
-        List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAll()
-                .stream()
-                .map(MediaResponseDto::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
+    public ResponseEntity<Page<Media>> getMediaList(Member member, Pageable pageable) {
+        Page<Media> mediaPage = mediaRepository.findAll(pageable);
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "전체 조회 성공", mediaPage), HttpStatus.OK);
     }
 
     // 전체 조회 - 영화
     @Transactional
-    public ResponseEntity<List<MediaResponseDto>> getTvs(Member member) {
-        List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.TV)
-                .stream()
-                .map(MediaResponseDto::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
+    public ResponseEntity<Page<Media>> getMovies(Member member,  Pageable pageable) {
+        Page<Media> mediaMoviePage = mediaRepository.findAllByCategory(MediaType.MOVIE, pageable);
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공", mediaMoviePage), HttpStatus.OK);
     }
 
     // 전체 조회 - TV
     @Transactional
-    public ResponseEntity<List<MediaResponseDto>> getMovies(Member member) {
-        List<MediaResponseDto> mediaResponseDtoList = mediaRepository.findAllByCategory(MediaType.MOVIE)
-                .stream()
-                .map(MediaResponseDto::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 전체 조회 성공", mediaResponseDtoList), HttpStatus.OK);
+    public ResponseEntity<Page<Media>> getTvs(Member member, Pageable pageable) {
+        Page<Media> mediaTvPage = mediaRepository.findAllByCategory(MediaType.TV, pageable);
+        return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공", mediaTvPage), HttpStatus.OK);
     }
+
 
 
     // 상세 조회 - 영화
@@ -108,6 +103,9 @@ public class MediaService {
     // 영화/TV 추천
     public ResponseEntity<MediaRecommendResponseDto> recommendAll(Member member) {
         List<MediaRecommendResponseDto> medias = mediaRepository.findAllByOrderByStarDesc().stream().map(MediaRecommendResponseDto::new).toList();
+        if (medias.size() > 8) {
+            medias = medias.subList(0, 8);
+        }
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "추천 영화/TV 조회 성공", medias), HttpStatus.OK);
     }
 }
