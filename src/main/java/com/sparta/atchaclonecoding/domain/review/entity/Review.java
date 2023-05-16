@@ -1,9 +1,8 @@
 package com.sparta.atchaclonecoding.domain.review.entity;
 
+import com.sparta.atchaclonecoding.domain.media.entity.Media;
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
-import com.sparta.atchaclonecoding.domain.movie.entity.Movie;
 import com.sparta.atchaclonecoding.domain.review.dto.ReviewRequestDto;
-import com.sparta.atchaclonecoding.domain.tv.entity.Tv;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +13,11 @@ import org.hibernate.annotations.Where;
 @Entity
 @NoArgsConstructor
 @Where(clause = "is_deleted = false")
-@SQLDelete(sql = "UPDATE review_tv SET is_deleted = true WHERE id = ? ")
-public class ReviewTv {
+@SQLDelete(sql = "UPDATE review SET is_deleted = true WHERE review_id = ? ")
+public class Review extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long id;
 
     @Column
@@ -27,8 +27,8 @@ public class ReviewTv {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "tv_id")
-    private Tv tv;
+    @JoinColumn(name = "media_id")
+    private Media media;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -36,10 +36,10 @@ public class ReviewTv {
 
     private boolean isDeleted = Boolean.FALSE;
 
-    public ReviewTv(Tv tv, ReviewRequestDto requestDto, Member member) {
+    public Review(Media media, ReviewRequestDto requestDto, Member member) {
         this.star = requestDto.getStar();
         this.content = requestDto.getContent();
-        this.tv = tv;
+        this.media = media;
         this.member = member;
     }
 
