@@ -1,8 +1,7 @@
 package com.sparta.atchaclonecoding.domain.member.controller;
 
-import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.*;
+import com.sparta.atchaclonecoding.domain.member.email.EmailService;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import com.sparta.atchaclonecoding.util.Message;
@@ -27,6 +26,7 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
+    private final EmailService emailService;
 
     @Operation(summary = "회원가입 메서드", description = "회원가입 메서드입니다.")
     @PostMapping("/signup")
@@ -50,6 +50,18 @@ public class MemberController {
     @GetMapping("/mypage")
     public ResponseEntity<Message> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return memberService.getMypage(userDetails.getMember());
+    }
+
+    @Operation(summary = "이메일 전송", description = "비밀번호 찾기를 위한 이메일 전송 메서드입니다.")
+    @PostMapping("/find-password")
+    public ResponseEntity<Message> sendEmailToFindPassword(@RequestBody EmailRequestDto requestDto) throws Exception {
+        return emailService.sendSimpleMessage(requestDto);
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "이메일 확인 후 비밀번호 변경 메서드입니다.")
+    @PostMapping("/confirm-email")
+    public ResponseEntity<Message> confirmEmailToFindPassword(@Valid @RequestParam String token, @Valid @RequestBody ChangePwRequestDto requestDto) {
+        return memberService.confirmEmailToFindPassword(token, requestDto);
     }
 
     @Operation(summary = "마이페이지 수정", description = "마이페이지 수정하는 메서드입니다.")

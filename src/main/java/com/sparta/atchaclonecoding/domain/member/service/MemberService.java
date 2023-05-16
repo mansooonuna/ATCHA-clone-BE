@@ -1,8 +1,12 @@
 package com.sparta.atchaclonecoding.domain.member.service;
 
+import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
+import com.sparta.atchaclonecoding.domain.member.email.ConfirmationToken;
+import com.sparta.atchaclonecoding.domain.member.email.ConfirmationTokenService;
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
 import com.sparta.atchaclonecoding.exception.CustomException;
@@ -17,6 +21,7 @@ import com.sparta.atchaclonecoding.util.StatusEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +36,7 @@ import java.util.Optional;
 
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -41,8 +47,8 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final ConfirmationTokenService confirmationTokenService;
     private final S3Uploader s3Uploader;
-
 
     //회원가입
     public ResponseEntity<Message> signup(SignupRequestDto requestDto) {
@@ -52,11 +58,13 @@ public class MemberService {
 
         Optional<Member> findMemberByEmail = memberRepository.findByEmail(email);
         if (findMemberByEmail.isPresent()) {
+            log.info("회원가입 중복된 이메일 사용");
             throw new CustomException(DUPLICATE_IDENTIFIER);
         }
 
         Optional<Member> findMemberByNickname = memberRepository.findByNickname(nickname);
         if (findMemberByNickname.isPresent()) {
+            log.info("회원가입 중복된 닉네임 사용");
             throw new CustomException(DUPLICATE_NICKNAME);
         }
 
@@ -118,6 +126,22 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+    //이메일 검증 후 비밀번호 변경
+    public ResponseEntity<Message> confirmEmailToFindPassword(String token, ChangePwRequestDto requestDto) {
+        ConfirmationToken findConfirmationToken = confirmationTokenService.findByIdAndExpired(token);
+        System.out.println(requestDto.getPassword());
+        Member findMember = memberRepository.findByEmail(findConfirmationToken.getEmail()).orElseThrow(
+                () -> new CustomException(USER_NOT_FOUND));
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        findConfirmationToken.useToken();
+
+        findMember.changePassword(password);
+
+        Message message = Message.setSuccess(StatusEnum.OK, "비밀번호 변경 성공");
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
     @Transactional
     public ResponseEntity<Message> profileUpdate(MultipartFile imageFile,
                                                  ProfileRequestDto profileRequestDto,
@@ -136,11 +160,9 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-
     // 헤더 셋팅 - 리프레시 토큰 미적용
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 //        response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
     }
-
 }
