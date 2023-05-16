@@ -31,14 +31,15 @@ public class TvCrawlingController {
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcd9M771Ob";
 
     public void process() {
-        System.setProperty("webdriver.chrome.driver", "./chromedriver");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
 
         // 크롬 드라이버 옵션 설정
         ChromeOptions options = new ChromeOptions();
 //        options.addArguments("--headless"); // 헤드리스 모드로 실행
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
-
+        options.addArguments("--remote-allow-origins=*");
+        // 크롬 드라이버 셋팅 (드라이버 설치한 경로 입력) 및 옵션 적용
         driver = new ChromeDriver(options);
 
         try {
@@ -57,7 +58,7 @@ public class TvCrawlingController {
     /**
      * data가져오기 : title, star, genre, information, age, image, personName, personJob
      */
-    private List<String> getDataList() throws InterruptedException {
+    private List<String> getDataList() throws InterruptedException, IOException {
         List<String> list = new ArrayList<>();
 
         driver.get(url);
@@ -113,7 +114,7 @@ public class TvCrawlingController {
                     .star(star)
                     .genre(genre)
                     .age(age)
-                    .image(image)
+                    .image(s3Uploader.uploadImage(image))
                     .information(information)
                     .build();
 
