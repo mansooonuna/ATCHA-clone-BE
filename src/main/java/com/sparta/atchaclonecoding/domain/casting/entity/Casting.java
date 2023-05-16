@@ -30,7 +30,8 @@ public class Casting {
     @Column(name = "profile_img_url",nullable = false)
     private String image;
 
-    public void addMedia(Media media){
-        this.media = media;
+
+    public void addMedia(Media media) {
+        this.media =media;
     }
 }
