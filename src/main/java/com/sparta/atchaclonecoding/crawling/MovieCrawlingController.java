@@ -81,7 +81,7 @@ public class MovieCrawlingController {
                 imageElement = driver.findElement(By.className("css-qhzw1o-StyledImg"));
                 informationElement = driver.findElement(By.className("css-kywn6v-StyledText"));
                 personElements = driver.findElements(By.className("css-1aaqvgs-InnerPartOfListWithImage"));
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (NoSuchElementException e) {
                 Thread.sleep(2000);
                 driver.navigate().back();

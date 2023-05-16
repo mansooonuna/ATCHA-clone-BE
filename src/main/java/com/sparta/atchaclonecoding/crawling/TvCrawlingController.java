@@ -126,6 +126,7 @@ public class TvCrawlingController {
                     personImage = personImageElements.get(i).getCssValue("background-image");
                     personName = personName.substring(0,personName.indexOf('('));
                     personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
+                    personImage = personImage.substring(5,personImage.indexOf(')')-1);
                     Casting casting = Casting.builder()
                             .name(personName)
                             .image(s3Uploader.uploadImage(personImage))
