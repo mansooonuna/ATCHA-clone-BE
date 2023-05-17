@@ -2,6 +2,7 @@ package com.sparta.atchaclonecoding.domain.media.dto;
 
 import com.sparta.atchaclonecoding.domain.casting.dto.CastingResponseDto;
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
+import com.sparta.atchaclonecoding.domain.media.entity.MediaType;
 import com.sparta.atchaclonecoding.domain.review.dto.ReviewResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MovieDetailResponseDto {
     private Long movieId;
+    private MediaType category;
     private String title;
     private String image;
     private String time;
@@ -19,11 +21,12 @@ public class MovieDetailResponseDto {
     private double star;
     private String age;
     private String information;
-    private List<CastingResponseDto> castingResponseDtos;
-    private List<ReviewResponseDto> reviewResponseDtos;
+    private List<CastingResponseDto> castingList;
+    private List<ReviewResponseDto> reviewList;
 
     public MovieDetailResponseDto(Media media, List<ReviewResponseDto> reviewList, List<CastingResponseDto> castingList) {
         this.movieId = media.getId();
+        this.category = media.getCategory();
         this.title = media.getTitle();
         this.image = media.getImage();
         this.time = media.getTime();
@@ -31,8 +34,8 @@ public class MovieDetailResponseDto {
         this.star = media.getStar();
         this.age = media.getAge();
         this.information = media.getInformation();
-        this.castingResponseDtos = castingList;
-        this.reviewResponseDtos = reviewList;
+        this.castingList = castingList;
+        this.reviewList = reviewList;
     }
 
 }
