@@ -1,5 +1,6 @@
 package com.sparta.atchaclonecoding.security.jwt;
 
+import com.sparta.atchaclonecoding.redis.util.RedisUtil;
 import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshToken;
 import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshTokenRepository;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsServiceImpl;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-
+    private final RedisUtil redisUtil;
     private static final String BEARER_PREFIX = "Bearer ";
     public static final String ACCESS_KEY = "ACCESS_KEY";
     public static final String REFRESH_KEY = "REFRESH_KEY";
@@ -77,6 +78,8 @@ public class JwtUtil {
 
     // 토큰 검증
     public boolean validateToken(String token) {
+        if(redisUtil.hasKeyBlackList(token))
+            return false;
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;

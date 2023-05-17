@@ -21,26 +21,24 @@ public class ReviewController {
 
     @Operation(summary = "리뷰 작성 메서드", description = "리뷰 작성하는 메서드입니다.")
     @PostMapping("/{mediaId}")
-    public ResponseEntity<Message> addReviewMovie(@PathVariable Long mediaId,
+    public ResponseEntity<Message> addReviewMedia(@PathVariable Long mediaId,
                                                   @RequestBody ReviewRequestDto requestDto,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return reviewService.addReviewMovie(mediaId, requestDto, userDetails.getMember());
+        return reviewService.addReviewMedia(mediaId, requestDto, userDetails.getMember());
     }
-
 
     @Operation(summary = "리뷰 수정 메서드", description = "리뷰 수정하는 메서드입니다.")
     @PutMapping("/{mediaId}/reviews/{mediaReviewId}")
-    public ResponseEntity<Message> updateReviewMovie(@PathVariable Long mediaId, @PathVariable Long mediaReviewId,
+    public ResponseEntity<Message> updateReviewMedia(@PathVariable Long mediaId, @PathVariable Long mediaReviewId,
                                                      @RequestBody ReviewRequestDto requestDto,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return reviewService.updateReviewMovie(mediaId, mediaReviewId, requestDto, userDetails.getMember());
+        return reviewService.updateReviewMedia(mediaId, mediaReviewId, requestDto, userDetails.getMember());
     }
 
     @Operation(summary = "리뷰 삭제 메서드", description = "리뷰 삭제하는 메서드입니다.")
     @DeleteMapping("/{mediaId}/reviews/{mediaReviewId}")
-    public ResponseEntity<Message> deleteReviewMovie(@PathVariable Long mediaId, @PathVariable Long mediaReviewId,
+    public ResponseEntity<Message> deleteReviewMedia(@PathVariable Long mediaId, @PathVariable Long mediaReviewId,
                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return reviewService.deleteReviewMovie(mediaId, mediaReviewId, userDetails.getMember());
+        return reviewService.deleteReviewMedia(mediaId, mediaReviewId, userDetails.getMember());
     }
-
 }

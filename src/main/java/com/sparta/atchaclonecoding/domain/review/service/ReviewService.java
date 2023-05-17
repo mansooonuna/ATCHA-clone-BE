@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.domain.review.service;
 
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
-import com.sparta.atchaclonecoding.domain.media.entity.MediaType;
 import com.sparta.atchaclonecoding.domain.media.repository.MediaRepository;
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.review.dto.ReviewRequestDto;
@@ -31,7 +30,7 @@ public class ReviewService {
     private final MediaRepository mediaRepository;
 
     // 리뷰 작성
-    public ResponseEntity<Message> addReviewMovie(Long mediaId, ReviewRequestDto requestDto, Member member) {
+    public ResponseEntity<Message> addReviewMedia(Long mediaId, ReviewRequestDto requestDto, Member member) {
         Media media = getMedia(mediaId);
 
         if (requestDto.getContent().equals("")) {
@@ -54,7 +53,7 @@ public class ReviewService {
     }
 
     // 리뷰 수정
-    public ResponseEntity<Message> updateReviewMovie(Long mediaId, Long mediaReviewId, ReviewRequestDto requestDto, Member member) {
+    public ResponseEntity<Message> updateReviewMedia(Long mediaId, Long mediaReviewId, ReviewRequestDto requestDto, Member member) {
         Media media = getMedia(mediaId);
 
         Review findMovieReview = getReview(mediaReviewId);
@@ -73,7 +72,7 @@ public class ReviewService {
     }
 
 
-    public ResponseEntity<Message> deleteReviewMovie(Long mediaId, Long mediaReviewId, Member member) {
+    public ResponseEntity<Message> deleteReviewMedia(Long mediaId, Long mediaReviewId, Member member) {
         Media media = getMedia(mediaId);
 
         Review findMovieReview = getReview(mediaReviewId);

@@ -60,8 +60,6 @@ public class MediaService {
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "TV 전체 조회 성공", mediaTvPage), HttpStatus.OK);
     }
 
-
-
     // 상세 조회 - 영화
     @Transactional
     public ResponseEntity<MovieDetailResponseDto> getMovie(Long movieId, Member member) {

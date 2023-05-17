@@ -98,7 +98,6 @@ public class MemberService {
     }
 
     // 로그아웃
-    @Transactional
     public ResponseEntity<Message> logout(Member member, HttpServletRequest request) {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(member.getEmail());
 
@@ -114,7 +113,6 @@ public class MemberService {
     }
 
     // 마이페이지 조회
-    @Transactional
     public ResponseEntity<Message> getMypage(Member member) {
         Member findMember = memberRepository.findByEmail(member.getEmail()).orElseThrow(
                 () -> new CustomException(USER_NOT_FOUND)
@@ -126,7 +124,6 @@ public class MemberService {
     //이메일 검증 후 비밀번호 변경
     public ResponseEntity<Message> confirmEmailToFindPassword(String token, ChangePwRequestDto requestDto) {
         ConfirmationToken findConfirmationToken = confirmationTokenService.findByIdAndExpired(token);
-        System.out.println(requestDto.getPassword());
         Member findMember = memberRepository.findByEmail(findConfirmationToken.getEmail()).orElseThrow(
                 () -> new CustomException(USER_NOT_FOUND));
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -139,7 +136,6 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @Transactional
     public ResponseEntity<Message> profileUpdate(MultipartFile imageFile,
                                                  ProfileRequestDto profileRequestDto,
                                                  Member member) throws IOException {
@@ -157,7 +153,6 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @Transactional
     public ResponseEntity<Message> nickUpdate(ProfileRequestDto profileRequestDto,
                                               Member member){
         Member findMember = memberRepository.findByEmail(member.getEmail()).orElseThrow(

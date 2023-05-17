@@ -31,7 +31,7 @@ public class EmailService {
     private MimeMessage createMessage(String receiverEmail)throws Exception{
         Member findMember = memberRepository.findByEmail(receiverEmail).orElseThrow(
                 () -> new CustomException(EMAIL_NOT_FOUND));
-        MimeMessage  message = emailSender.createMimeMessage();
+        MimeMessage message = emailSender.createMimeMessage();
         ConfirmationToken emailConfirmationToken = ConfirmationToken.createConfirmationToken(findMember.getEmail());
         confirmationTokenRepository.save(emailConfirmationToken);
 
