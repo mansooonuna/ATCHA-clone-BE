@@ -1,6 +1,10 @@
 package com.sparta.atchaclonecoding.domain.member.controller;
 
-import com.sparta.atchaclonecoding.domain.member.dto.*;
+import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.email.EmailService;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
@@ -71,5 +75,12 @@ public class MemberController {
                                                  @RequestPart ProfileRequestDto profileRequestDto,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
+    }
+
+    @PutMapping(value = "/page",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> nickUpdate(@RequestPart ProfileRequestDto profileRequestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memberService.nickUpdate(profileRequestDto, userDetails.getMember());
     }
 }

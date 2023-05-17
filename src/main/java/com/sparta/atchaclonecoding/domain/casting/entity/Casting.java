@@ -27,7 +27,8 @@ public class Casting {
     @JoinColumn(name = "media_id")
     private Media media;
 
-    @Column(name = "profile_img_url",nullable = false)
+    @Column(name = "profile_img_url",nullable = false, columnDefinition = "longtext")
+    @Lob
     private String image;
 
     public void addMedia(Media media){
