@@ -37,10 +37,7 @@ https://zigzag-morning-cd7.notion.site/S-A-dc57b27df46645f0a2a201a9574db3d1
 
 
 # 🎞️ ERD
-
-<div align=center> 
-  <img src="https://github.com/hh14-1-cloneCoding/ATCHA-clone-BE/assets/102853354/6fa11300-a792-4179-9a17-e095d5e8f655.png" width="100%" center />
-  </div>
+![image](https://github.com/hh14-1-cloneCoding/ATCHA-clone-BE/assets/102853354/4fb8def5-6995-471d-b588-d791a1545be3) 
 
 # 🍋 주요기능
 <ol>
