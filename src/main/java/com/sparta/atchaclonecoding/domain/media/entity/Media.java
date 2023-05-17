@@ -31,9 +31,16 @@ public class Media {
     private String image;
     @Column
     private double star;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MediaType category;
+
+    public void deleteStar(){
+        this.star = 0;
+    }
+
+    public void updateStar(double star){
+        this.star = star;
+    }
 
 }
