@@ -31,41 +31,42 @@ public class MediaController {
     @Operation(summary = "전체 조회 메서드", description = "영화/TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/all")
     public ResponseEntity<Page<Media>> medias(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                              @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                              @PageableDefault(size = 8, sort = "title", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getMediaList(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "영화 전체 조회 메서드", description = "영화 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/movies")
     public ResponseEntity<Page<Media>> movies(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                         @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                              @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getMovies(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "TV 전체 조회 메서드", description = "TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/tvs")
     public ResponseEntity<Page<Media>> tvs(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                           @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getTvs(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "영화 상세 조회 메서드", description = "선택한 영화를 상세 조회하는 메서드입니다.")
     @GetMapping("/movies/{movieId}")
     public ResponseEntity<MovieDetailResponseDto> movie(@PathVariable Long movieId,
-                                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
         return mediaService.getMovie(movieId, userDetails.getMember());
     }
 
     @Operation(summary = "TV 상세 조회 메서드", description = "선택한 TV 프로그램을 상세 조회하는 메서드입니다.")
     @GetMapping("/tvs/{tvId}")
     public ResponseEntity<TvDetailResponseDto> tv(@PathVariable Long tvId,
-                                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails){
         return mediaService.getTv(tvId, userDetails.getMember());
     }
 
     @Operation(summary = "전체 검색 메서드", description = "영화와 TV 프로그램을 검색하는 메서드입니다.")
     @GetMapping("/search")
-    public ResponseEntity<Message> searchAll(@RequestParam(value = "searchKeyword") String searchKeyword, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Message> searchAll(@RequestParam(value = "searchKeyword") String searchKeyword,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mediaService.searchTv(searchKeyword, userDetails.getMember());
     }
 
@@ -74,7 +75,5 @@ public class MediaController {
     public ResponseEntity<MediaRecommendResponseDto> recommendAll(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mediaService.recommendAll(userDetails.getMember());
     }
-
-
 
 }

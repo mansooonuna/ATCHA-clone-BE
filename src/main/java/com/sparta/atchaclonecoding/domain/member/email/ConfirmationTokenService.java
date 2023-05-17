@@ -1,14 +1,10 @@
 package com.sparta.atchaclonecoding.domain.member.email;
 
-import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor

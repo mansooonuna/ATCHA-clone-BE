@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChangePwRequestDto {
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\\\d|.*[!@#$%^&*()\\-+=~])(?=.*[A-Za-z\\\\d!@#$%^&*()\\-+=~]).{10,}$", message = "영문, 숫자, 특문 중 2개 조합 10자 이상")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9`~!@#$%^&*()-_=+\\|[{]};:'\",<.>/?]).{10,}$", message = "영문, 숫자, 특문 중 2개 조합 10자 이상")
     private String password;
 }

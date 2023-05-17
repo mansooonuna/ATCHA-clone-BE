@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.security.jwt;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data

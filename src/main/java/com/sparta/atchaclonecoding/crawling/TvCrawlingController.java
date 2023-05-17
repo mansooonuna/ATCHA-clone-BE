@@ -29,13 +29,14 @@ public class TvCrawlingController {
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcd9zYxPaN";
 
     public void process() {
-        System.setProperty("webdriver.chrome.driver", "./chromedriver");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
 
         ChromeOptions options = new ChromeOptions();
 //        options.addArguments("--headless"); // 헤드리스 모드로 실행
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
 
+        options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
 
         try {

@@ -1,12 +1,10 @@
 package com.sparta.atchaclonecoding.domain.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter

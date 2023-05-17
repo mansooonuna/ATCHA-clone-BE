@@ -1,10 +1,6 @@
 package com.sparta.atchaclonecoding.domain.member.controller;
 
-import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
-import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.*;
 import com.sparta.atchaclonecoding.domain.member.email.EmailService;
 import com.sparta.atchaclonecoding.domain.member.service.MemberService;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
@@ -56,15 +52,6 @@ public class MemberController {
         return memberService.getMypage(userDetails.getMember());
     }
 
-    @Operation(summary = "마이페이지 수정", description = "마이페이지 프로필사진, 닉네임 변경하는 메서드입니다.")
-    @PutMapping(value = "/mypage",
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Message> profileUpdate (@RequestPart("imageFile") MultipartFile image,
-                                                  @RequestPart ProfileRequestDto profileRequestDto,
-                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
-    }
-
     @Operation(summary = "이메일 전송", description = "비밀번호 찾기를 위한 이메일 전송 메서드입니다.")
     @PostMapping("/find-password")
     public ResponseEntity<Message> sendEmailToFindPassword(@RequestBody EmailRequestDto requestDto) throws Exception {
@@ -75,5 +62,21 @@ public class MemberController {
     @PostMapping("/confirm-email")
     public ResponseEntity<Message> confirmEmailToFindPassword(@Valid @RequestParam String token, @Valid @RequestBody ChangePwRequestDto requestDto) {
         return memberService.confirmEmailToFindPassword(token, requestDto);
+    }
+
+    @Operation(summary = "마이페이지 수정", description = "마이페이지 수정하는 메서드입니다.")
+    @PutMapping(value = "/mypage",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> profileUpdate(@RequestPart("imageFile")MultipartFile image,
+                                                 @RequestPart ProfileRequestDto profileRequestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return memberService.profileUpdate(image, profileRequestDto, userDetails.getMember());
+    }
+
+    @PutMapping(value = "/page",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> nickUpdate(@RequestPart ProfileRequestDto profileRequestDto,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memberService.nickUpdate(profileRequestDto, userDetails.getMember());
     }
 }

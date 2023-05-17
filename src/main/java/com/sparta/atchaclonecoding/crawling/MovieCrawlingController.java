@@ -31,7 +31,7 @@ public class MovieCrawlingController {
 
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
-        System.setProperty("webdriver.chrome.driver", "./chromedriver");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
 
         // 크롬 드라이버 옵션 설정
         ChromeOptions options = new ChromeOptions();
@@ -39,6 +39,7 @@ public class MovieCrawlingController {
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
 
+        options.addArguments("--remote-allow-origins=*");
         // 크롬 드라이버 셋팅 (드라이버 설치한 경로 입력) 및 옵션 적용
         driver = new ChromeDriver(options);
 
@@ -156,7 +157,6 @@ public class MovieCrawlingController {
                 }
                 i++;
             }
-
 
             driver.navigate().back();
             Thread.sleep(2000);

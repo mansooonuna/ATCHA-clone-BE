@@ -1,5 +1,6 @@
 package com.sparta.atchaclonecoding.security.jwt;
 
+import com.sparta.atchaclonecoding.redis.util.RedisUtil;
 import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshToken;
 import com.sparta.atchaclonecoding.security.jwt.refreshToken.RefreshTokenRepository;
 import com.sparta.atchaclonecoding.security.userDetails.UserDetailsServiceImpl;
@@ -27,8 +28,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-
-    //    public static final String AUTHORIZATION_HEADER = "Authorization";
+    private final RedisUtil redisUtil;
     private static final String BEARER_PREFIX = "Bearer ";
     public static final String ACCESS_KEY = "ACCESS_KEY";
     public static final String REFRESH_KEY = "REFRESH_KEY";
@@ -62,6 +62,7 @@ public class JwtUtil {
     public TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
     }
+
     public String createToken(String email, String token) {
         Date date = new Date();
         long tokenType = token.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
@@ -77,6 +78,8 @@ public class JwtUtil {
 
     // 토큰 검증
     public boolean validateToken(String token) {
+        if(redisUtil.hasKeyBlackList(token))
+            return false;
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -109,6 +112,7 @@ public class JwtUtil {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
         return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
     }
+
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
         response.setHeader(ACCESS_KEY, accessToken);
     }

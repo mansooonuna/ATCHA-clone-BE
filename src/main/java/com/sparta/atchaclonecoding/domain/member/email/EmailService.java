@@ -2,6 +2,9 @@ package com.sparta.atchaclonecoding.domain.member.email;
 
 import com.sparta.atchaclonecoding.domain.member.dto.EmailRequestDto;
 
+import com.sparta.atchaclonecoding.domain.member.entity.Member;
+import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
+import com.sparta.atchaclonecoding.exception.CustomException;
 import com.sparta.atchaclonecoding.util.StatusEnum;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.internet.InternetAddress;
@@ -13,16 +16,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import com.sparta.atchaclonecoding.util.Message;
+
+import static com.sparta.atchaclonecoding.exception.ErrorCode.EMAIL_NOT_FOUND;
+import static com.sparta.atchaclonecoding.exception.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender emailSender;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final MemberRepository memberRepository;
 
     private MimeMessage createMessage(String receiverEmail)throws Exception{
-        MimeMessage  message = emailSender.createMimeMessage();
-        ConfirmationToken emailConfirmationToken = ConfirmationToken.createConfirmationToken(receiverEmail);
+        Member findMember = memberRepository.findByEmail(receiverEmail).orElseThrow(
+                () -> new CustomException(EMAIL_NOT_FOUND));
+        MimeMessage message = emailSender.createMimeMessage();
+        ConfirmationToken emailConfirmationToken = ConfirmationToken.createConfirmationToken(findMember.getEmail());
         confirmationTokenRepository.save(emailConfirmationToken);
 
         message.addRecipients(RecipientType.TO, receiverEmail);
@@ -36,7 +46,7 @@ public class EmailService {
         msgg+= "<p style=\"margin-block-start: 0; margin-block-end: 0; margin-inline-start: 0; margin-inline-end: 0; line-height: 1.47; letter-spacing: -0.22px; font-size: 15px; margin: 8px 0 0;\">안녕하세요, 앗챠!입니다.</p>";
         msgg+= "<p style=\"margin-block-start: 0; margin-block-end: 0; margin-inline-start: 0; margin-inline-end: 0; line-height: 1.47; letter-spacing: -0.22px; font-size: 15px; margin: 8px 0 0;\">아래 버튼을 눌러 새 비밀번호를 설정해 주세요.</p>";
         msgg+= "<p style=\"margin-block-start: 0; margin-block-end: 0; margin-inline-start: 0; margin-inline-end: 0; line-height: 1.47; letter-spacing: -0.22px; font-size: 15px; margin: 8px 0 0;\">";
-        msgg+= "<a href=\"http://54.180.120.82:8080/atcha/members/confirm-email?token="+emailConfirmationToken.getId()+"\" style=\"text-decoration: none; color: white; display: inline-block; font-size: 15px; font-weight: 500; font-stretch: normal; font-style: normal; line-: normal; letter-spacing: normal; border-radius: 2px; background-color: #141517; margin: 24px 0 19px; padding: 11px 6px;\" rel=\"noreferrer noopener\" target=\"_blank\">비밀번호 변경하기</a>";
+        msgg+= "<a href=\"http://localhost:3000/resetPassword?token="+emailConfirmationToken.getId()+"\" style=\"text-decoration: none; color: white; display: inline-block; font-size: 15px; font-weight: 500; font-stretch: normal; font-style: normal; line-: normal; letter-spacing: normal; border-radius: 2px; background-color: #141517; margin: 24px 0 19px; padding: 11px 6px;\" rel=\"noreferrer noopener\" target=\"_blank\">비밀번호 변경하기</a>";
         msgg+= "</p>";
         msgg+= "<p style=\"margin-block-start: 0; margin-block-end: 0; margin-inline-start: 0; margin-inline-end: 0; line-height: 1.47; letter-spacing: -0.22px; font-size: 15px; margin: 20px 0;\">";
         msgg+= "감사합니다.<br>";
@@ -60,7 +70,7 @@ public class EmailService {
         return message;
     }
 
-    public ResponseEntity<com.sparta.atchaclonecoding.util.Message> sendSimpleMessage(EmailRequestDto requestDto)throws Exception {
+    public ResponseEntity<Message> sendSimpleMessage(EmailRequestDto requestDto)throws Exception {
 
         MimeMessage message = createMessage(requestDto.getEmail());
         try{//예외처리
@@ -69,7 +79,7 @@ public class EmailService {
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        com.sparta.atchaclonecoding.util.Message successMessage = com.sparta.atchaclonecoding.util.Message.setSuccess(StatusEnum.OK, "이메일을 성공적으로 보냈습니다.");
+        Message successMessage = Message.setSuccess(StatusEnum.OK, "이메일을 성공적으로 보냈습니다.");
         return new ResponseEntity<>(successMessage, HttpStatus.OK);
     }
 }
