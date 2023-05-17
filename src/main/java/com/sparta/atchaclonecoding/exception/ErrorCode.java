@@ -18,7 +18,6 @@ public enum ErrorCode {
 
     //404 NOT_FOUND,
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
     NON_CONTENT(HttpStatus.BAD_REQUEST, "글의 내용이 없습니다."),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 이메일을 찾을 수 없습니다." ),
     MOVIE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 영화를 찾을 수 없습니다." ),

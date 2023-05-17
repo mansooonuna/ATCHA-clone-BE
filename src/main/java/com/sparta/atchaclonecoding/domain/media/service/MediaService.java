@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.sparta.atchaclonecoding.exception.ErrorCode.MOVIE_NOT_FOUND;
+import static com.sparta.atchaclonecoding.exception.ErrorCode.TV_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -77,13 +78,13 @@ public class MediaService {
     // 상세 조회 - TV
     @Transactional
     public ResponseEntity<TvDetailResponseDto> getTv(Long tvId, Member member) {
-        Media mediaMovie = mediaRepository.findByIdAndCategory(tvId, MediaType.TV).orElseThrow(
-                () -> new CustomException(MOVIE_NOT_FOUND)
+        Media mediaTv = mediaRepository.findByIdAndCategory(tvId, MediaType.TV).orElseThrow(
+                () -> new CustomException(TV_NOT_FOUND)
         );
         List<CastingResponseDto> castingResponseDto = castingRepository.findAllByMediaId(tvId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
         List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllById(tvId).stream()
                 .sorted(Comparator.comparing(Review::getCreatedAt).reversed()).map(ReviewResponseDto::new).collect(Collectors.toList());
-        TvDetailResponseDto tvDetailResponseDto = new TvDetailResponseDto(mediaMovie, reviewResponseDto, castingResponseDto);
+        TvDetailResponseDto tvDetailResponseDto = new TvDetailResponseDto(mediaTv, reviewResponseDto, castingResponseDto);
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "티비 상세 조회 성공", tvDetailResponseDto), HttpStatus.OK);
     }
 
@@ -96,7 +97,7 @@ public class MediaService {
         if (medias.isEmpty()) {
             message = Message.setSuccess(StatusEnum.OK, "검색 결과 없음", medias);
         }
-        message = Message.setSuccess(StatusEnum.OK, "요청성공", medias);
+        message = Message.setSuccess(StatusEnum.OK, "요청 성공", medias);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 

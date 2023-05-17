@@ -1,6 +1,7 @@
 package com.sparta.atchaclonecoding.domain.review.service;
 
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
+import com.sparta.atchaclonecoding.domain.media.entity.MediaType;
 import com.sparta.atchaclonecoding.domain.media.repository.MediaRepository;
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.review.dto.ReviewRequestDto;
@@ -68,11 +69,12 @@ public class ReviewService {
 
     private Media getMedia(Long mediaId){
         return mediaRepository.findById(mediaId).orElseThrow(
-                () -> new CustomException(MOVIE_NOT_FOUND)
+                () -> new CustomException(MEDIA_NOT_FOUND)
         );
     }
 
-    private Review getReview(Long mediaReviewId){
+    //리뷰 유무 체크
+    private Review getReview(Long mediaReviewId) {
         return reviewRepository.findById(mediaReviewId).orElseThrow(
                 () -> new CustomException(REVIEW_NOT_FOUND)
         );
