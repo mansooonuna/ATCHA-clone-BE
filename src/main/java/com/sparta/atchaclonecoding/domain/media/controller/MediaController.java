@@ -31,21 +31,21 @@ public class MediaController {
     @Operation(summary = "전체 조회 메서드", description = "영화/TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/all")
     public ResponseEntity<Page<Media>> medias(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                              @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                              @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getMediaList(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "영화 전체 조회 메서드", description = "영화 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/movies")
     public ResponseEntity<Page<Media>> movies(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                         @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                                         @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getMovies(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "TV 전체 조회 메서드", description = "TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/tvs")
     public ResponseEntity<Page<Media>> tvs(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PageableDefault(size = 8, sort = "mediaId", direction = Sort.Direction.ASC) Pageable pageable){
+                                                      @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         return mediaService.getTvs(userDetails.getMember(), pageable);
     }
 
