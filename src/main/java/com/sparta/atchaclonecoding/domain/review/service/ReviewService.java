@@ -46,8 +46,8 @@ public class ReviewService {
         for(int i=0; i<stars.size(); i++){
             star += stars.get(i);
         }
-        star = star/reviews.size();
-        media.updateStar(star);
+        star = Math.floor(star/reviews.size()*100);
+        media.updateStar(star/100.0);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 작성 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -65,8 +65,8 @@ public class ReviewService {
         for(int i=0; i<stars.size(); i++){
             star += stars.get(i);
         }
-        star = star/reviews.size();
-        media.updateStar(star);
+        star = Math.floor(star/reviews.size()*100);
+        media.updateStar(star/100.0);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 수정 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -89,8 +89,8 @@ public class ReviewService {
         for(int i=0; i<stars.size(); i++){
             star += stars.get(i);
         }
-        star = star/reviews.size();
-        media.updateStar(star);
+        star = Math.floor(star/reviews.size()*100);
+        media.updateStar(star/100.0);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 삭제 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
