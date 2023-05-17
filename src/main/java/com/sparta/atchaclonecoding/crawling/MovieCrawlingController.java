@@ -124,8 +124,8 @@ public class MovieCrawlingController {
                     .information(information)
                     .build();
             mediaRepository.save(media);
-    
-            List<WebElement> personImageElements = driver.findElements(By.cssSelector("[class*=ProfilePhotoImage]"));
+
+            List<WebElement> personImageElements = driver.findElements(By.cssSelector(".profilePhotoBlock [class*='ProfilePhotoImage']"));
 
             int i = 0;
             while (i < 6) {
