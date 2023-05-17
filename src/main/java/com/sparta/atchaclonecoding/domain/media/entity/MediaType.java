@@ -10,7 +10,4 @@ public enum MediaType {
         this.mediaType = mediaType;
     }
 
-    public String getMedia(){
-        return mediaType;
-    }
 }
