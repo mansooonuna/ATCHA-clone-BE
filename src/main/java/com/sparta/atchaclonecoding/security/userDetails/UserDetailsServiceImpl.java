@@ -1,7 +1,7 @@
 package com.sparta.atchaclonecoding.security.userDetails;
+
 import com.sparta.atchaclonecoding.domain.member.entity.Member;
 import com.sparta.atchaclonecoding.domain.member.repository.MemberRepository;
-import com.sparta.atchaclonecoding.security.userDetails.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -28,7 +28,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    //    public static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     public static final String ACCESS_KEY = "ACCESS_KEY";
     public static final String REFRESH_KEY = "REFRESH_KEY";
@@ -62,6 +61,7 @@ public class JwtUtil {
     public TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
     }
+
     public String createToken(String email, String token) {
         Date date = new Date();
         long tokenType = token.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
@@ -109,6 +109,7 @@ public class JwtUtil {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByEmail(getUserInfoFromToken(token));
         return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
     }
+
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
         response.setHeader(ACCESS_KEY, accessToken);
     }
