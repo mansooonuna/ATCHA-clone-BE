@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 
 @Slf4j
@@ -38,6 +40,15 @@ public class ReviewService {
         }
         Review reviewMovie = new Review(media, requestDto, member);
         reviewRepository.save(reviewMovie);
+        media.deleteStar();
+        List<Review> reviews = reviewRepository.findAll();
+        double star = 0;
+        List<Double> stars = reviewRepository.selectStar();
+        for(int i=0; i<stars.size(); i++){
+            star += stars.get(i);
+        }
+        star = star/reviews.size();
+        media.updateStar(star);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 작성 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -48,6 +59,15 @@ public class ReviewService {
 
         Review findMovieReview = getReview(mediaReviewId);
         findMovieReview.update(requestDto);
+        media.deleteStar();
+        List<Review> reviews = reviewRepository.findAll();
+        double star = 0;
+        List<Double> stars = reviewRepository.selectStar();
+        for(int i=0; i<stars.size(); i++){
+            star += stars.get(i);
+        }
+        star = star/reviews.size();
+        media.updateStar(star);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 수정 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
@@ -63,6 +83,15 @@ public class ReviewService {
         }
 
         reviewRepository.deleteById(mediaReviewId);
+        media.deleteStar();
+        List<Review> reviews = reviewRepository.findAll();
+        double star = 0;
+        List<Double> stars = reviewRepository.selectStar();
+        for(int i=0; i<stars.size(); i++){
+            star += stars.get(i);
+        }
+        star = star/reviews.size();
+        media.updateStar(star);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 삭제 성공");
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

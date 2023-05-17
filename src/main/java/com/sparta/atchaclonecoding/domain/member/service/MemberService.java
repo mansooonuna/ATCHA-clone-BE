@@ -157,6 +157,18 @@ public class MemberService {
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<Message> nickUpdate(ProfileRequestDto profileRequestDto,
+                                              Member member){
+        Member findMember = memberRepository.findByEmail(member.getEmail()).orElseThrow(
+                () -> new CustomException(USER_NOT_FOUND)
+        );
+        findMember.setNickname(profileRequestDto.getNickname());
+        memberRepository.save(findMember);
+        Message message = Message.setSuccess(StatusEnum.OK, "수정 성공", findMember);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
     // 헤더 셋팅 - 리프레시 토큰 미적용
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());

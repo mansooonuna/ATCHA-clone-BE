@@ -69,7 +69,7 @@ public class MediaService {
                 () -> new CustomException(MOVIE_NOT_FOUND)
         );
         List<CastingResponseDto> castingResponseDto = castingRepository.findAllByMediaId(movieId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
-        List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllById(movieId).stream()
+        List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllByMediaId(movieId).stream()
                 .sorted(Comparator.comparing(Review::getCreatedAt).reversed()).map(ReviewResponseDto::new).collect(Collectors.toList());
         MovieDetailResponseDto movieDetailResponseDto = new MovieDetailResponseDto(mediaMovie, reviewResponseDto, castingResponseDto);
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "영화 상세 조회 성공", movieDetailResponseDto), HttpStatus.OK);
@@ -82,7 +82,7 @@ public class MediaService {
                 () -> new CustomException(TV_NOT_FOUND)
         );
         List<CastingResponseDto> castingResponseDto = castingRepository.findAllByMediaId(tvId).stream().map(CastingResponseDto::new).collect(Collectors.toList());
-        List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllById(tvId).stream()
+        List<ReviewResponseDto> reviewResponseDto = reviewRepository.findAllByMediaId(tvId).stream()
                 .sorted(Comparator.comparing(Review::getCreatedAt).reversed()).map(ReviewResponseDto::new).collect(Collectors.toList());
         TvDetailResponseDto tvDetailResponseDto = new TvDetailResponseDto(mediaTv, reviewResponseDto, castingResponseDto);
         return new ResponseEntity(Message.setSuccess(StatusEnum.OK, "티비 상세 조회 성공", tvDetailResponseDto), HttpStatus.OK);

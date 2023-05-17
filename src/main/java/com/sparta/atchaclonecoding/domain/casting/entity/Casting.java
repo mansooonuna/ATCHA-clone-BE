@@ -31,8 +31,7 @@ public class Casting {
     @Lob
     private String image;
 
-
-    public void addMedia(Media media) {
-        this.media =media;
+    public void addMedia(Media media){
+        this.media = media;
     }
 }
