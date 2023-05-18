@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +33,14 @@ public class TvCrawlingController {
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcd9zYxPaN";
 
     public void process() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "./chromedriver");
 
         ChromeOptions options = new ChromeOptions();
 //        options.addArguments("--headless"); // 헤드리스 모드로 실행
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
 
-        options.addArguments("--remote-allow-origins=*");
+//        options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
 
         try {
@@ -102,13 +106,20 @@ public class TvCrawlingController {
             String image = imageElement.getAttribute("src");
             String information = informationElement.getText();
 
+            String titleImageFileName = "image" + count + ".jpg";
+
+            URL titleImageUrl = new URL(image);
+            Path titleTargetPath = Path.of("/Users/ihojeong/Documents/crawlingImage/TV/titleImage/" + titleImageFileName);
+            Files.copy(titleImageUrl.openStream(), titleTargetPath, StandardCopyOption.REPLACE_EXISTING);
+            list.add(titleImageFileName);
+
             Media media = Media.builder()
                     .title(title)
                     .star(star)
                     .category(MediaType.TV)
                     .genre(genre)
                     .age(age)
-                    .image(s3Uploader.uploadImage(image))
+                    .image((s3Uploader.upload(titleTargetPath.toFile(), "images/" + titleImageFileName)))
                     .information(information)
                     .build();
             mediaRepository.save(media);
@@ -128,9 +139,17 @@ public class TvCrawlingController {
                     personName = personName.substring(0,personName.indexOf('('));
                     personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
                     personImage = personImage.substring(5,personImage.indexOf(')')-1);
+
+                    String castingImageFileName = "image" + personName + ".jpg";
+
+                    URL castingImageUrl = new URL(personImage);
+                    Path castingTargetPath = Path.of("/Users/ihojeong/Documents/crawlingImage/TV/castingImage/" + castingImageFileName);
+                    Files.copy(castingImageUrl.openStream(), castingTargetPath, StandardCopyOption.REPLACE_EXISTING);
+                    list.add(castingImageFileName);
+
                     Casting casting = Casting.builder()
                             .name(personName)
-                            .image(s3Uploader.uploadImage(personImage))
+                            .image(s3Uploader.upload(titleTargetPath.toFile(), "images/" + castingImageFileName))
                             .role(personJob)
                             .build();
                     casting.addMedia(media);
