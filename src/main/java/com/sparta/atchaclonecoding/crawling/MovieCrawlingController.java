@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +32,9 @@ public class MovieCrawlingController {
 
     private static final String url = "https://pedia.watcha.com/ko-KR/decks/gcdNL4a4vN";
 
-
     public void process() {
         //크롬 드라이버 셋팅 (드라이버 설치한 경로 입력)
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Song\\Desktop\\chromedriver_win32\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "./chromedriver");
 
         // 크롬 드라이버 옵션 설정
         ChromeOptions options = new ChromeOptions();
@@ -39,7 +42,6 @@ public class MovieCrawlingController {
 //        options.addArguments("--disable-gpu"); // GPU 사용 안함
 //        options.addArguments("--disable-popup-blocking");//팝업 창 무시
 
-        options.addArguments("--remote-allow-origins=*");
         // 크롬 드라이버 셋팅 (드라이버 설치한 경로 입력) 및 옵션 적용
         driver = new ChromeDriver(options);
 
@@ -108,12 +110,17 @@ public class MovieCrawlingController {
             String image = imageElement.getAttribute("src");
             String information = informationElement.getText();
 
-            System.out.println(title);
-            System.out.println(genre);
-            System.out.println(image);
+            String titleImageFileName = "image" + count + ".jpg"; //이미지 파일명 생성
 
+            //로컬에 이미지 다운로드
+            URL titleImageUrl = new URL(image);
+            Path titleTargetPath = Path.of("/Users/ihojeong/Documents/crawlingImage/MOVIE/titleImage/" + titleImageFileName);
+            Files.copy(titleImageUrl.openStream(), titleTargetPath, StandardCopyOption.REPLACE_EXISTING);
 
+            //다운로드한 이미지 파일명을 리스트에 추가
+            list.add(titleImageFileName);
 
+            //다운로드한 이미지를 S3에 업로드
             Media media = Media.builder()
                     .title(title)
                     .star(star)
@@ -121,7 +128,7 @@ public class MovieCrawlingController {
                     .genre(genre)
                     .time(time)
                     .age(age)
-                    .image(s3Uploader.uploadImage(image))
+                    .image(s3Uploader.upload(titleTargetPath.toFile(), "images/" + titleImageFileName))
                     .information(information)
                     .build();
             mediaRepository.save(media);
@@ -141,11 +148,19 @@ public class MovieCrawlingController {
                     personName = personName.substring(0,personName.indexOf('('));
                     personJob = personJob.substring(personJob.indexOf('(')+1,personJob.lastIndexOf(')'));
                     personImage = personImage.substring(5,personImage.indexOf(')')-1);
-                    System.out.println(personImage);
+
+                    String castingImageFileName = "image" + personName + ".jpg"; //이미지 파일명 생성
+
+                    //이미지 다운로드
+                    URL castingImageUrl = new URL(personImage);
+                    Path castingTargetPath = Path.of("/Users/ihojeong/Documents/crawlingImage/MOVIE/castingImage/" + castingImageFileName);
+                    Files.copy(castingImageUrl.openStream(), castingTargetPath, StandardCopyOption.REPLACE_EXISTING);
+                    //다운로드한 이미지 파일명을 리스트에 추가
+                    list.add(castingImageFileName);
 
                     Casting casting = Casting.builder()
                             .name(personName)
-                            .image(s3Uploader.uploadImage(personImage))
+                            .image(s3Uploader.upload(titleTargetPath.toFile(), "images/" + castingImageFileName))
                             .role(personJob)
                             .build();
                     casting.addMedia(media);
