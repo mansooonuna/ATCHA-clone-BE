@@ -1,6 +1,8 @@
 package com.sparta.atchaclonecoding.domain.member.service;
 
+import com.sparta.atchaclonecoding.domain.member.dto.ChangePwRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.LoginRequestDto;
+import com.sparta.atchaclonecoding.domain.member.dto.ProfileRequestDto;
 import com.sparta.atchaclonecoding.domain.member.dto.SignupRequestDto;
 import com.sparta.atchaclonecoding.domain.member.email.ConfirmationToken;
 import com.sparta.atchaclonecoding.domain.member.email.ConfirmationTokenService;
@@ -25,15 +27,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Member Service 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +61,10 @@ class MemberServiceTest {
     HttpServletResponse httpServletResponse;
     @Mock
     HttpServletRequest httpServletRequest;
+    @Mock
+    ConfirmationToken confirmationToken;
+    @Mock
+    MultipartFile multipartFile;
     @InjectMocks
     MemberService memberService;
 
@@ -232,20 +241,101 @@ class MemberServiceTest {
         @Test
         void confirmEmailToFindPassword() {
             // Given
-
+            String token = "test_token";
+            when(confirmationTokenService.findByIdAndExpired(token)).thenReturn(confirmationToken);
+            ChangePwRequestDto requestDto = new ChangePwRequestDto("password2!");
+            when(memberRepository.findByEmail(confirmationToken.getEmail())).thenReturn(Optional.of(member));
             // When
-
+            ResponseEntity<Message> response = memberService.confirmEmailToFindPassword(token, requestDto);
             // Then
+            assertEquals("비밀번호 변경 성공", response.getBody().getMessage());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+
+        @DisplayName("비밀번호 변경 실패 테스트 - 없는 회원")
+        @Test
+        void confirmEmailToFindPassword_memberNotFound() {
+            // Given
+            String token = "test_token";
+            ChangePwRequestDto requestDto = new ChangePwRequestDto("password2!");
+            when(confirmationTokenService.findByIdAndExpired(token)).thenReturn(confirmationToken);
+            when(memberRepository.findByEmail(confirmationToken.getEmail())).thenReturn(Optional.empty());
+            // When
+            CustomException exception = assertThrows(CustomException.class, () -> memberService.confirmEmailToFindPassword(token, requestDto));
+            // Then
+            assertEquals(USER_NOT_FOUND, exception.getErrorCode());
         }
     }
 
+    @DisplayName("프로필 사진 수정 테스트")
+    @Nested
+    class profileUpdateTest {
+        @DisplayName("프로필 사진 수정 성공 테스트")
+        @Test
+        void profileUpdate() throws IOException {
+            // Given
+            ProfileRequestDto requestDto = new ProfileRequestDto("닉네임 수정");
+            when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(member));
+            // When
+            ResponseEntity<Message> response = memberService.profileUpdate(multipartFile, requestDto, member);
+            // Then
+            assertEquals("수정 성공", response.getBody().getMessage());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
 
+        @DisplayName("프로필 사진 수정 성공 테스트 - 이미지 파일이 비어있는 경우")
+        @Test
+        void profileUpdate_noImageFile() throws IOException {
+            // Given
+            MultipartFile imageFile = new MockMultipartFile("test.jpg", new byte[0]);
+            ProfileRequestDto requestDto = new ProfileRequestDto("닉네임 수정");
+            when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(member));
+            // When
+            ResponseEntity<Message> response = memberService.profileUpdate(imageFile, requestDto, member);
+            // Then
+            assertEquals("수정 성공", response.getBody().getMessage());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
 
-    @Test
-    void profileUpdate() {
+        @DisplayName("프로필 사진 수정 실패 테스트 - 없는 회원")
+        @Test
+        void profileUpdate_memberNotFound() {
+            // Given
+            ProfileRequestDto requestDto = new ProfileRequestDto("닉네임 수정");
+            when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+            // When
+            CustomException exception = assertThrows(CustomException.class, () -> memberService.profileUpdate(multipartFile, requestDto, member));
+            // Then
+            assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+        }
     }
 
-    @Test
-    void nickUpdate() {
+    @DisplayName("닉네임 수정 테스트")
+    @Nested
+    class nickUpdateTest {
+        @DisplayName("닉네임 수정 성공 테스트")
+        @Test
+        void nickUpdate() {
+            // Given
+            ProfileRequestDto requestDto = new ProfileRequestDto("닉네임 수정");
+            when(memberRepository.findByEmail(member.getEmail())).thenReturn(Optional.of(member));
+            // When
+            ResponseEntity<Message> response = memberService.nickUpdate(requestDto, member);
+            // Then
+            assertEquals("수정 성공", response.getBody().getMessage());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+
+        @DisplayName("닉네임 수정 실패 테스트 - 없는 회원")
+        @Test
+        void nickUpdate_memberNotFound() {
+            // Given
+            ProfileRequestDto requestDto = new ProfileRequestDto("닉네임 수정");
+            when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+            // When
+            CustomException exception = assertThrows(CustomException.class, () -> memberService.nickUpdate(requestDto, member));
+            // Then
+            assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+        }
     }
 }
