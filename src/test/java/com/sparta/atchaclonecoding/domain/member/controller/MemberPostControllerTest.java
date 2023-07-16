@@ -44,8 +44,6 @@ class MemberPostControllerTest {
         memberController = new MemberController(memberService, emailService);
     }
 
-    Member member = Member.builder().id(1L).email("example@email.com").password("password1!").nickname("닉네임").build();
-
     @DisplayName("[POST] 회원가입 테스트")
     @Test
     void signup() {
