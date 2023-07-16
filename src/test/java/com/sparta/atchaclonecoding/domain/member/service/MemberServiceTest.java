@@ -37,8 +37,8 @@ import java.util.Optional;
 import static com.sparta.atchaclonecoding.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
 
 @DisplayName("Member Service 테스트")
 @ExtendWith(MockitoExtension.class)
