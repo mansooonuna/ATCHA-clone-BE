@@ -3,10 +3,12 @@ package com.sparta.atchaclonecoding.domain.member.dto;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDto {
