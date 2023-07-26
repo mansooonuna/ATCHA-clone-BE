@@ -1,7 +1,6 @@
 package com.sparta.atchaclonecoding.domain.media.controller;
 
 import com.sparta.atchaclonecoding.domain.media.dto.MediaRecommendResponseDto;
-import com.sparta.atchaclonecoding.domain.media.dto.MediaResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.MovieDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.media.dto.TvDetailResponseDto;
 import com.sparta.atchaclonecoding.domain.media.entity.Media;
@@ -19,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/atcha")
 @RequiredArgsConstructor
@@ -31,35 +28,35 @@ public class MediaController {
     @Operation(summary = "전체 조회 메서드", description = "영화/TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/all")
     public ResponseEntity<Page<Media>> medias(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                              @PageableDefault(size = 8, sort = "title", direction = Sort.Direction.ASC) Pageable pageable){
+                                              @PageableDefault(size = 8, sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
         return mediaService.getMediaList(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "영화 전체 조회 메서드", description = "영화 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/movies")
     public ResponseEntity<Page<Media>> movies(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                              @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+                                              @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return mediaService.getMovies(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "TV 전체 조회 메서드", description = "TV 전체 목록 조회하는 메서드입니다.")
     @GetMapping("/tvs")
     public ResponseEntity<Page<Media>> tvs(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                           @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+                                           @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return mediaService.getTvs(userDetails.getMember(), pageable);
     }
 
     @Operation(summary = "영화 상세 조회 메서드", description = "선택한 영화를 상세 조회하는 메서드입니다.")
     @GetMapping("/movies/{movieId}")
     public ResponseEntity<MovieDetailResponseDto> movie(@PathVariable Long movieId,
-                                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mediaService.getMovie(movieId, userDetails.getMember());
     }
 
     @Operation(summary = "TV 상세 조회 메서드", description = "선택한 TV 프로그램을 상세 조회하는 메서드입니다.")
     @GetMapping("/tvs/{tvId}")
     public ResponseEntity<TvDetailResponseDto> tv(@PathVariable Long tvId,
-                                                  @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mediaService.getTv(tvId, userDetails.getMember());
     }
 

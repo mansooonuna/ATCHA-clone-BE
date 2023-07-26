@@ -58,13 +58,7 @@ public class ReviewService {
 
     public ResponseEntity<Message> deleteReviewMedia(Long mediaId, Long mediaReviewId, Member member) {
         Media media = getMedia(mediaId);
-
         Review findMovieReview = getReview(mediaReviewId);
-        if (findMovieReview.isDeleted()) {
-            log.info("리뷰가 이미 삭제됨");
-            throw new CustomException(REVIEW_NOT_FOUND);
-        }
-
         reviewRepository.deleteById(mediaReviewId);
         updateStars(media);
         Message message = Message.setSuccess(StatusEnum.OK, "리뷰 삭제 성공");
