@@ -26,43 +26,10 @@ public class S3Uploader {
     // 프로필 업로드
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
-//        if (!fileName.toLowerCase().endsWith(".jpg")) {
-//            fileName += ".jpg";
-//        }
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getSize());
         amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), objMeta);
 
-        return amazonS3.getUrl(bucket, fileName).toString();
-    }
-
-    public String upload(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + uploadFile.getName();
-        String uploadImageUrl = putS3(uploadFile, fileName);
-        removeNewFile(uploadFile);
-        return uploadImageUrl;
-    }
-
-    // 삭제
-    private void removeNewFile(File targetFile) {
-        if (targetFile.delete()) {
-            log.info("파일이 삭제되었습니다.");
-        } else {
-            log.info("파일이 삭제되지 못했습니다.");
-        }
-    }
-
-    //
-    public String uploadImage(String image){
-        ObjectMetadata objMeta = new ObjectMetadata();
-        objMeta.setContentLength(image.length());
-        amazonS3.putObject(bucket, image, image);
-
-        return amazonS3.getUrl(bucket, image).toString();
-    }
-
-    private String putS3(File uploadFile, String fileName) {
-        amazonS3.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
